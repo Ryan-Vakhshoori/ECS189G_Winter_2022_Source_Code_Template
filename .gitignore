@@ -1,0 +1,4 @@
+# ignore stage 2 data because file exceeds github's limit
+/data/stage_2_data/
+# ignore .DS_Store
+.DS_Store
