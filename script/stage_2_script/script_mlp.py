@@ -17,6 +17,9 @@ if 1:
     train_data_obj = Dataset_Loader('numbers', '')
     train_data_obj.dataset_source_folder_path = '../../data/stage_2_data/'
     train_data_obj.dataset_source_file_name = 'train.csv'
+    test_data_obj = Dataset_Loader('numbers', '')
+    test_data_obj.dataset_source_folder_path = '../../data/stage_2_data/'
+    test_data_obj.dataset_source_file_name = 'test.csv'
     # x = train_data_obj.load()
 
     method_obj = Method_MLP('multi-layer perceptron', '')
@@ -29,7 +32,7 @@ if 1:
     # ------------------------------------------------------
 
     print('************ Start ************')
-    setting_obj.prepare(train_data_obj, method_obj, result_obj, evaluate_obj)
+    setting_obj.prepare({'traint':train_data_obj, 'test': test_data_obj}, method_obj, result_obj, evaluate_obj)
     setting_obj.print_setup_summary()
     mean_score, std_score = setting_obj.load_run_save_evaluate()
     print('************ Overall Performance ************')

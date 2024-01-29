@@ -13,11 +13,17 @@ import numpy as np
 class ModelExecution(setting):
     def load_run_save_evaluate(self):
         # load dataset
-        loaded_data = self.dataset.load()
-        learned_result = self.method.run(loaded_data['X'], loaded_data['y'])
+        train_loaded_data = self.dataset['train'].load()
+        test_loaded_data = self.dataset['test'].load()
+        X_train, X_test = np.array(train_loaded_data['X']), np.array(test_loaded_data['X'])
+        y_train, y_test = np.array(train_loaded_data['y']), np.array(test_loaded_data['y'])
+
+        self.method.data = {'train': {'X': X_train, 'y': y_train}, 'test': {'X': X_test, 'y': y_test}}
+        learned_result = self.method.run()
 
         self.result.data = learned_result
         self.result.save()
+
 
         score_list = self.evaluate.evaluate(learned_result)
 
