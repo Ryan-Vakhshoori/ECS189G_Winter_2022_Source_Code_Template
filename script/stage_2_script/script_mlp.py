@@ -32,11 +32,14 @@ if 1:
     # ------------------------------------------------------
 
     print('************ Start ************')
-    setting_obj.prepare({'traint':train_data_obj, 'test': test_data_obj}, method_obj, result_obj, evaluate_obj)
+    setting_obj.prepare(train_data_obj, method_obj, result_obj, evaluate_obj)
     setting_obj.print_setup_summary()
-    mean_score, std_score = setting_obj.load_run_save_evaluate()
+    setting_obj.load_run()
+    setting_obj.prepare(test_data_obj, method_obj, result_obj, evaluate_obj)
+    setting_obj.print_setup_summary()
+    accuracy = setting_obj.load_test_data()
     print('************ Overall Performance ************')
-    print('MLP Accuracy: ' + str(mean_score) + ' +/- ' + str(std_score))
+    print('MLP Accuracy: ' + str(accuracy))
     print('************ Finish ************')
 
     # -------------------------------------------------------

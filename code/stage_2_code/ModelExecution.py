@@ -11,21 +11,23 @@ import numpy as np
 
 
 class ModelExecution(setting):
-    def load_run_save_evaluate(self):
+    def load_run(self):
         # load dataset
-        train_loaded_data = self.dataset['train'].load()
-        test_loaded_data = self.dataset['test'].load()
-        X_train, X_test = np.array(train_loaded_data['X']), np.array(test_loaded_data['X'])
-        y_train, y_test = np.array(train_loaded_data['y']), np.array(test_loaded_data['y'])
+        train_loaded_data = self.dataset.load()
 
-        self.method.data = {'train': {'X': X_train, 'y': y_train}, 'test': {'X': X_test, 'y': y_test}}
-        learned_result = self.method.run()
+        X_train= np.array(train_loaded_data['X'])
+        y_train= np.array(train_loaded_data['y'])
 
-        self.result.data = learned_result
-        self.result.save()
+        self.method.data = {'X': X_train, 'y': y_train}
+        self.method.run()
 
+    def load_test_data(self):
+        test_loaded_data = self.dataset.load()
+        X_test, y_test = np.array(test_loaded_data['X']), np.array(test_loaded_data['y'])
 
-        score_list = self.evaluate.evaluate(learned_result)
-
-        return np.mean(score_list), np.std(score_list)
-
+        y_pred = self.method.test(X_test)
+        learned_result = {'pred_y': y_pred, 'true_y': y_test}
+        # self.result.data = learned_result
+        # self.result.save()
+        self.evaluate.data = learned_result
+        return self.evaluate.evaluate()
