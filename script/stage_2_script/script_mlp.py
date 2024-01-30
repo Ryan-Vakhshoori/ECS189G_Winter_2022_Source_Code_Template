@@ -23,5 +23,5 @@ if 1:
     result_obj.result_destination_folder_path = '../../result/stage_2_result/MLP_'
     result_obj.result_destination_file_name = 'prediction_result'
 
-    evaluate_obj = Evaluate_Accuracy('accuracy', '')
+    # evaluate_obj = Evaluate_Accuracy('accuracy', '')
     # ------------------------------------------------------
