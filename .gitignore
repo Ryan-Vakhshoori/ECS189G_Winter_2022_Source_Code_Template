@@ -2,3 +2,4 @@
 /data/stage_2_data/
 # ignore .DS_Store
 .DS_Store
+.pyc
