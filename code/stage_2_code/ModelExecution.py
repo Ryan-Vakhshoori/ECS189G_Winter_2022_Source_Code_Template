@@ -27,7 +27,7 @@ class ModelExecution(setting):
 
         y_pred = self.method.test(X_test)
         learned_result = {'pred_y': y_pred, 'true_y': y_test}
-        # self.result.data = learned_result
-        # self.result.save()
+        self.result.data = learned_result
+        self.result.save()
         self.evaluate.data = learned_result
         return self.evaluate.evaluate()

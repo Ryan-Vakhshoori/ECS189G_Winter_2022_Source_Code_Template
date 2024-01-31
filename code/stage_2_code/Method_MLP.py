@@ -22,13 +22,36 @@ class Method_MLP(method, nn.Module):
     # it defines the the MLP model architecture, e.g.,
     # how many layers, size of variables in each layer, activation function, etc.
     # the size of the input/output portal of the model architecture should be consistent with our data input and desired output
-    def __init__(self, mName, mDescription):
-        method.__init__(self, mName, mDescription)
+    def __init__(self, mName, mDescription,hidden_layers, optimizer, activation_function):
+        method.__init__(self, mName, mDescription,hidden_layers,optimizer,activation_function)
         nn.Module.__init__(self)
+
+        self.hidden_layer_map = {}
+        self.hidden_layers = hidden_layers
+        self.activation_function = activation_function
+        self.optimizer = optimizer
+
+        hidden_layer_activation_function = nn.ReLU()
+        if activation_function == "sigmoid":
+            hidden_layer_activation_function = nn.Sigmoid()
+        elif activation_function == "tanh":
+            hidden_layer_activation_function = nn.Tanh()
+        elif activation_function == "linear":
+            hidden_layer_activation_function = nn.Linear()
+
         # check here for nn.Linear doc: https://pytorch.org/docs/stable/generated/torch.nn.Linear.html
         self.fc_layer_1 = nn.Linear(784, 28)
         # check here for nn.ReLU doc: https://pytorch.org/docs/stable/generated/torch.nn.ReLU.html
-        self.activation_func_1 = nn.ReLU()
+        self.activation_func_1 = hidden_layer_activation_function
+
+        for i,x in enumerate(self.hidden_layers):
+            self.hidden_layer_map["hidden_layer_" + str(i+1)] = nn.Linear(x[0], x[1])
+            self.hidden_layer_map["hidden_activation_layer_" + str(i+1)] = hidden_layer_activation_function
+
+
+
+
+
         self.fc_layer_2 = nn.Linear(28, 10)
         # check here for nn.Softmax doc: https://pytorch.org/docs/stable/generated/torch.nn.Softmax.html
         self.activation_func_2 = nn.Softmax(dim=1)
@@ -40,6 +63,13 @@ class Method_MLP(method, nn.Module):
         '''Forward propagation'''
         # hidden layer embeddings
         h = self.activation_func_1(self.fc_layer_1(x))
+        # print(h.shape)
+
+        for i in range(len(self.hidden_layers)):
+            # print(h.shape)
+            # print(x.shape)
+            # print((self.hidden_layer_map["hidden_layer_" + str(i+1)](x)))
+            h = self.hidden_layer_map["hidden_activation_layer_"+ str(i+1)](self.hidden_layer_map["hidden_layer_" + str(i+1)](h))
         # outout layer result
         # self.fc_layer_2(h) will be a nx2 tensor
         # n (denotes the input instance number): 0th dimension; 2 (denotes the class number): 1st dimension
@@ -51,8 +81,13 @@ class Method_MLP(method, nn.Module):
     # so we don't need to define the error backpropagation function here
 
     def train(self, X, y):
+
         # check here for the torch.optim doc: https://pytorch.org/docs/stable/optim.html
-        optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
+        if self.optimizer == "adam":
+            optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
+        else:
+            optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate)
+
         # check here for the nn.CrossEntropyLoss doc: https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html
         loss_function = nn.CrossEntropyLoss()
         # for training accuracy investigation purpose

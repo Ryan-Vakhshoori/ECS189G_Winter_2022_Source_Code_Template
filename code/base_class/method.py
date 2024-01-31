@@ -24,6 +24,9 @@ class method:
     
     method_name = None
     method_description = None
+    method_hidden_layers = []
+    method_optimizer = None
+    method_activation_function = None
     
     data = None
     
@@ -34,9 +37,12 @@ class method:
     method_testing_time = None
 
     # initialization function
-    def __init__(self, mName=None, mDescription=None):
+    def __init__(self,mName=None,mDescription=None,hidden_layers=[], optimizer="adam", activation_function="relu",):
         self.method_name = mName
         self.method_description = mDescription
+        self.method_hidden_layers = hidden_layers
+        self.method_optimizer = optimizer
+        self.method_activation_function = activation_function
 
     # running function
     @abc.abstractmethod
