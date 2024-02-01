@@ -19,8 +19,8 @@ class ModelExecution(setting):
         y_train= np.array(train_loaded_data['y'])
 
         self.method.data = {'X': X_train, 'y': y_train}
-        self.method.run()
-
+        epoch, train_loss = self.method.run()
+        return epoch, train_loss
     def load_test_data(self):
         test_loaded_data = self.dataset.load()
         X_test, y_test = np.array(test_loaded_data['X']), np.array(test_loaded_data['y'])

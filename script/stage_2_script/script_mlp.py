@@ -3,6 +3,7 @@ from code.stage_2_code.Method_MLP import Method_MLP
 from code.stage_2_code.Result_Saver import Result_Saver
 from code.stage_2_code.ModelExecution import ModelExecution
 from code.stage_2_code.Evaluation_Metrics import Evaluation_Metrics
+from code.stage_2_code.Graphing import Graph
 import torch
 import numpy as np
 
@@ -24,6 +25,8 @@ if 1:
 
     method_obj = Method_MLP(mName='multi-layer perceptron', mDescription='', hidden_layers=[], optimizer="adam",activation_function="relu")
 
+    graph_obj = Graph()
+
     result_obj = Result_Saver('saver', '')
     result_obj.result_destination_folder_path = '../../result/stage_2_result/MLP_'
     result_obj.result_destination_file_name = 'prediction_result'
@@ -34,7 +37,8 @@ if 1:
     print('************ Start ************')
     setting_obj.prepare(train_data_obj, method_obj, result_obj, evaluate_obj)
     setting_obj.print_setup_summary()
-    setting_obj.load_run()
+    epoch, train_loss = setting_obj.load_run()
+    graph_obj.traininglossgraph(epoch, train_loss)
     setting_obj.prepare(test_data_obj, method_obj, result_obj, evaluate_obj)
     setting_obj.print_setup_summary()
     accuracy, precision, f1_score, recall, support = setting_obj.load_test_data()

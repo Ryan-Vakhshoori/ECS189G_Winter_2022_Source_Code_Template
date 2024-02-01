@@ -81,7 +81,8 @@ class Method_MLP(method, nn.Module):
     # so we don't need to define the error backpropagation function here
 
     def train(self, X, y):
-
+        epoch_count = []
+        train_loss_count = []
         # check here for the torch.optim doc: https://pytorch.org/docs/stable/optim.html
         if self.optimizer == "adam":
             optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
@@ -112,11 +113,12 @@ class Method_MLP(method, nn.Module):
             # check here for the opti.step doc: https://pytorch.org/docs/stable/optim.html
             # update the variables according to the optimizer and the gradients calculated by the above loss.backward function
             optimizer.step()
-
+            epoch_count.append(epoch)
+            train_loss_count.append(train_loss.item())
             if epoch % 100 == 0:
                 accuracy_evaluator.data = {'true_y': y_true, 'pred_y': y_pred.max(1)[1]}
                 print('Epoch:', epoch, 'Accuracy:', accuracy_evaluator.evaluate(), 'Loss:', train_loss.item())
-
+        return epoch_count, train_loss_count
     def test(self, X):
         # do the testing, and result the result
         y_pred = self.forward(torch.FloatTensor(np.array(X)))
@@ -127,4 +129,5 @@ class Method_MLP(method, nn.Module):
     def run(self):
         print('method running...')
         print('--start training...')
-        self.train(self.data['X'], self.data['y'])
+        epoch_count, train_loss = self.train(self.data['X'], self.data['y'])
+        return epoch_count, train_loss
