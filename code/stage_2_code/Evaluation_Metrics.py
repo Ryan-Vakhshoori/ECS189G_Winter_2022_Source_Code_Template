@@ -13,7 +13,7 @@ class Evaluation_Metrics(evaluate):
     data = None
 
     def evaluate(self):
-        precision, recall, fscore, support = precision_recall_fscore_support(self.data['true_y'],
+        precision, recall, f1score, support = precision_recall_fscore_support(self.data['true_y'],
                                                                              self.data['pred_y'], average='macro')
         print('evaluating performance...')
-        return [accuracy_score(self.data['true_y'], self.data['pred_y']),precision,fscore,recall,support]
+        return [accuracy_score(self.data['true_y'], self.data['pred_y']),precision,f1score,recall]

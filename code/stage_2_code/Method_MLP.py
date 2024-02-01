@@ -36,8 +36,7 @@ class Method_MLP(method, nn.Module):
             hidden_layer_activation_function = nn.Sigmoid()
         elif activation_function == "tanh":
             hidden_layer_activation_function = nn.Tanh()
-        elif activation_function == "linear":
-            hidden_layer_activation_function = nn.Linear()
+
 
         # check here for nn.Linear doc: https://pytorch.org/docs/stable/generated/torch.nn.Linear.html
         self.fc_layer_1 = nn.Linear(784, 28)
