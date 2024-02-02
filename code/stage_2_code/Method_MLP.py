@@ -22,7 +22,7 @@ class Method_MLP(method, nn.Module):
     # it defines the the MLP model architecture, e.g.,
     # how many layers, size of variables in each layer, activation function, etc.
     # the size of the input/output portal of the model architecture should be consistent with our data input and desired output
-    def __init__(self, mName, mDescription,hidden_layers, optimizer, activation_function):
+    def __init__(self, mName, mDescription, hidden_layers, optimizer, activation_function):
         method.__init__(self, mName, mDescription,hidden_layers,optimizer,activation_function)
         nn.Module.__init__(self)
 
@@ -51,7 +51,7 @@ class Method_MLP(method, nn.Module):
 
 
 
-        self.fc_layer_2 = nn.Linear(28, 10)
+        self.fc_layer_2 = nn.Linear(hidden_layers[-1][1], 10)
         # check here for nn.Softmax doc: https://pytorch.org/docs/stable/generated/torch.nn.Softmax.html
         self.activation_func_2 = nn.Softmax(dim=1)
 
