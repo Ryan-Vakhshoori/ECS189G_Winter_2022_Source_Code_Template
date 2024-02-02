@@ -51,7 +51,7 @@ class Method_MLP(method, nn.Module):
 
 
 
-        self.fc_layer_2 = nn.Linear(hidden_layers[-1][1], 10)
+        self.fc_layer_2 = nn.Linear(28, 10)
         # check here for nn.Softmax doc: https://pytorch.org/docs/stable/generated/torch.nn.Softmax.html
         self.activation_func_2 = nn.Softmax(dim=1)
 
