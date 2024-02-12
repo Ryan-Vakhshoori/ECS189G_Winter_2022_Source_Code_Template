@@ -1,5 +1,6 @@
 # ignore stage_2_script 2 data because file exceeds github's limit
-/data/stage_2_data/
+/data/stage_2_data
+/data/stage_3_data
 # ignore .DS_Store
 .DS_Store
 *.pyc
