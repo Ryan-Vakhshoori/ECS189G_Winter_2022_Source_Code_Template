@@ -30,6 +30,6 @@ class Dataset_Loader(dataset):
 
         # print(data['train'][0])
         # print(data['train'][0]['image'].shape)
-        train_data = torch.utils.data.DataLoader(data['train'], batch_size=32, shuffle=True)
-        test_data = torch.utils.data.DataLoader(data['test'], batch_size=32, shuffle=False)
+        train_data = torch.utils.data.DataLoader(data['train'], batch_size=64, shuffle=True)
+        test_data = torch.utils.data.DataLoader(data['test'], batch_size=64, shuffle=False)
         return {'train_data': train_data, 'test_data': test_data}

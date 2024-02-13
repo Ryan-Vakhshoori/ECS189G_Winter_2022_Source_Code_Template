@@ -24,8 +24,8 @@ if 1:
     method_obj = Method_CNN('CIFARModel', '', [], "", "")
 
     result_obj = Result_Saver('saver', '')
-    result_obj.result_destination_folder_path = '../../result/stage_3_result/MLP_'
-    result_obj.result_destination_file_name = 'prediction_result'
+    result_obj.result_destination_folder_path = '../../result/stage_3_result/CNN_'
+    result_obj.result_destination_file_name = 'CIFAR_prediction_result'
 
     setting_obj = ModelExecution('model execution', '')
 

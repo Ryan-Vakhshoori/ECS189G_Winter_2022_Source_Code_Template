@@ -13,8 +13,8 @@ class ModelExecution(setting):
     def load_test_data(self):
         loaded_data = self.dataset.load()
         self.method.data = loaded_data
-        predict, labels, resulting_loss, epoch = self.method.run()
-        accuracy = self.evaluate.data
+        accuracy, resulting_loss, epoch = self.method.run()
+        self.evaluate.data = accuracy
         self.result.data = accuracy
         self.result.save()
-        return {'evaluate': self.evaluate.evaluate(), 'train_loss': resulting_loss, 'epoch': epoch}
+        return {'evaluate': accuracy, 'train_loss': resulting_loss, 'epoch': epoch}
