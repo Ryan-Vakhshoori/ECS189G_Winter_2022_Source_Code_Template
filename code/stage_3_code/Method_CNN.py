@@ -58,10 +58,11 @@ class Method_CNN(method, nn.Module):
         for epoch in range(self.max_epoch):  # you can do an early stop if self.max_epoch is too much...
             total_loss = 0.0
             res_loss = 0.0
-            for i, data in enumerate(X):
-                image, label = data
-                output = self.forward(image)
-                loss = loss_function(output, label)
+            for i, data in enumerate(X, 0):
+                inputs = data['image']
+                labels = data['label']
+                output = self.forward(inputs)
+                loss = loss_function(output, labels)
                 total_loss += loss.item()
                 optimizer.zero_grad()
                 loss.backward()
@@ -85,10 +86,10 @@ class Method_CNN(method, nn.Module):
 
 
 
-    def run(self, train_data, X_labels, test_data):
+    def run(self):
         print('method running...')
         print('--start training...')
-        resulting_loss = self.train(train_data)
+        resulting_loss = self.train(self.data['train_data'])
         print('--start testing...')
-        predict, labels = self.test(test_data)
+        predict, labels = self.test(self.data['test_data'])
         return {'pred_y': predict, 'labels': labels, 'resulting_loss': resulting_loss, 'epoch': self.max_epoch}
