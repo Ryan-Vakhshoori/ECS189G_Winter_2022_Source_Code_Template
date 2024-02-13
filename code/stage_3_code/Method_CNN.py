@@ -76,20 +76,24 @@ class Method_CNN(method, nn.Module):
 
     def test(self, test_data):
         predict,labels = [],[]
+        total = 0
+        correct = 0
         for data in test_data:
             image, label = data
             outputs = self.forward(image)
             _, predicted = torch.max(outputs.data, 1)
-            predict.append(predicted)
-            labels.append(label)
-        return {'predict': predict, 'labels': labels}
+            total += label.size(0)
+            correct += (predicted == label).sum().item()
+        accuracy = correct / total
+        return accuracy
 
 
 
     def run(self):
+        accuracy_evaluator = Evaluate_Accuracy('training evaluator', '')
         print('method running...')
         print('--start training...')
         resulting_loss = self.train(self.data['train_data'])
         print('--start testing...')
-        predict, labels = self.test(self.data['test_data'])
-        return {'pred_y': predict, 'labels': labels, 'resulting_loss': resulting_loss, 'epoch': self.max_epoch}
+        accuracy_ev = self.test(self.data['test_data'])
+        return {'resulting_loss': resulting_loss, 'epoch': self.max_epoch, 'accuracy': accuracy_ev}
