@@ -67,8 +67,8 @@ class Method_CNN(method, nn.Module):
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
-                if i % 2000 == 1999:  # print every 2000 mini-batches
-                    print(f'[{epoch + 1}, {i + 1:5d}] loss: {total_loss / 2000:.3f}')
+                if i % 200 == 0:  # print every 2000 mini-batches
+                    print(f'[{epoch + 1}, {i + 1:5d}] loss: {total_loss / 200:.3f}')
                     res_loss += total_loss
                     total_loss = 0.0
             resulting_loss.append(res_loss / len(X))
@@ -79,15 +79,22 @@ class Method_CNN(method, nn.Module):
         total = 0
         correct = 0
         for data in test_data:
-            image, label = data
-            outputs = self.forward(image)
+            inputs = data['image']
+            labels = data['label']
+            outputs = self.forward(inputs)
             _, predicted = torch.max(outputs.data, 1)
+<<<<<<< HEAD
             total += label.size(0)
             correct += (predicted == label).sum().item()
         accuracy = correct / total
         return accuracy
-
-
+=======
+            print(predicted)
+            print(labels)
+            predict.append(predicted)
+            labels.append(label)
+        return {'predict': predict, 'labels': labels}
+>>>>>>> cd7ec2ba58dfc94adf1811f95677ff5598aee0f8
 
     def run(self):
         accuracy_evaluator = Evaluate_Accuracy('training evaluator', '')
