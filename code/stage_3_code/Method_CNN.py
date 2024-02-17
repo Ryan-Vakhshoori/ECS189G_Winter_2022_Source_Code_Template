@@ -14,7 +14,7 @@ import numpy as np
 
 class Method_CNN(method, nn.Module):
     data = None
-    max_epoch = 20
+    max_epoch = 100
     learning_rate = 1e-3
 
     def __init__(self, mName, mDescription,hidden_layers, optimizer, activation_function):
@@ -46,10 +46,10 @@ class Method_CNN(method, nn.Module):
         )
         self.flatten = nn.Flatten()
         self.final_layer = nn.Sequential(
-            nn.Linear(128 * 4 * 4, 128),
+            nn.Linear(19712, 128),
             nn.ReLU(),
             nn.Dropout(0.2),
-            nn.Linear(128, 10)
+            nn.Linear(128, 41)
         )
 
     def forward(self, x):
@@ -106,4 +106,4 @@ class Method_CNN(method, nn.Module):
         resulting_loss = self.train(self.data['train_data'])
         print('--start testing...')
         accuracy_ev = self.test(self.data['test_data'])
-        return {'resulting_loss': resulting_loss, 'epoch': self.max_epoch, 'accuracy': accuracy_ev}
+        return {'resulting_loss': resulting_loss, 'epochs': self.max_epoch, 'accuracy': accuracy_ev}

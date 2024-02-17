@@ -17,15 +17,15 @@ if 1:
     # ---- objection initialization section ---------------
     loaded_obj = Dataset_Loader('numbers', '')
     loaded_obj.dataset_source_folder_path = '../../data/stage_3_data/'
-    loaded_obj.dataset_source_file_name = 'CIFAR'
+    loaded_obj.dataset_source_file_name = 'ORL'
 
     graph_obj = Graph()
 
-    method_obj = Method_CNN('CIFARModel', '', [], "", "")
+    method_obj = Method_CNN('ORLModel', '', [], "", "")
 
     result_obj = Result_Saver('saver', '')
     result_obj.result_destination_folder_path = '../../result/stage_3_result/CNN_'
-    result_obj.result_destination_file_name = 'CIFAR_prediction_result'
+    result_obj.result_destination_file_name = 'ORL_prediction_result'
 
     setting_obj = ModelExecution('model execution', '')
 
@@ -35,5 +35,9 @@ if 1:
     print('************ Start (Model 1) ************')
     setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
     setting_obj.print_setup_summary()
-    evaluate, train_loss, epoch = setting_obj.load_test_data()
+    train_results = setting_obj.load_test_data()
+    # train_loss, epoch, accuracy = setting_obj.load_test_data()
+    train_loss = train_results['resulting_loss']
+    epoch = train_results['epochs']
+    accuracy = train_results['accuracy']
     graph_obj.traininglossgraph(epoch,train_loss)
