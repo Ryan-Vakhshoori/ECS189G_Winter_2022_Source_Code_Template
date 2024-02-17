@@ -2,5 +2,6 @@
 /data/stage_2_data
 /data/stage_3_data
 # ignore .DS_Store
+/data/stage_3_data/
 .DS_Store
 *.pyc
