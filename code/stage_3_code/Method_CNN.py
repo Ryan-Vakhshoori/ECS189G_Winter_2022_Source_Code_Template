@@ -14,51 +14,53 @@ import numpy as np
 
 class Method_CNN(method, nn.Module):
     data = None
-    max_epoch = 100
+    max_epoch = 5
     learning_rate = 1e-3
 
     def __init__(self, mName, mDescription,hidden_layers, optimizer, activation_function):
         method.__init__(self, mName, mDescription, hidden_layers, optimizer, activation_function)
         nn.Module.__init__(self)
+
         self.layer_1 = nn.Sequential(
-            nn.Conv2d(3, 32, kernel_size=3, padding=1),
+            nn.Conv2d(in_channels=1, out_channels=32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.Conv2d(32, 32, kernel_size=3, padding=1),
+            nn.Conv2d(in_channels=32, out_channels=32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2),
-            nn.Dropout(0.2)
+            nn.MaxPool2d(kernel_size=2, stride=2)
         )
         self.layer_2 = nn.Sequential(
-            nn.Conv2d(32, 64, kernel_size=3, padding=1),
+            nn.Conv2d(in_channels=32, out_channels=32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.Conv2d(64, 64, kernel_size=3, padding=1),
+            nn.Conv2d(in_channels=32, out_channels=32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2),
-            nn.Dropout(0.2)
+            nn.MaxPool2d(kernel_size=2, stride=2)
         )
         self.layer_3 = nn.Sequential(
-            nn.Conv2d(64, 128, kernel_size=3, padding=1),
-            nn.ReLU(),
-            nn.Conv2d(128, 128, kernel_size=3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2),
-            nn.Dropout(0.2)
-        )
-        self.flatten = nn.Flatten()
-        self.final_layer = nn.Sequential(
-            nn.Linear(19712, 128),
-            nn.ReLU(),
-            nn.Dropout(0.2),
-            nn.Linear(128, 41)
+            nn.Flatten(),
+            nn.Linear(7 * 7 * 32, 10)
         )
 
     def forward(self, x):
-        output = self.layer_1(x)
-        output = self.layer_2(output)
-        output = self.layer_3(output)
-        output = self.flatten(output)
-        output = self.final_layer(output)
-        return output
+        x = self.layer_1(x)
+        x = self.layer_2(x)
+        x = self.layer_3(x)
+        return x
+
+        # self.flatten = nn.Flatten()
+        # self.final_layer = nn.Sequential(
+        #     nn.Linear(49, 50),
+        #     nn.ReLU(),
+        #     nn.Dropout(0.2),
+        #     nn.Linear(50, 10)
+        # )
+
+    # def forward(self, x):
+    #     output = self.layer_1(x)
+    #     output = self.layer_2(output)
+    #     # output = self.layer_3(output)
+    #     output = self.flatten(output)
+    #     output = self.final_layer(output)
+    #     return output
 
     def train(self, X):
         optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate, momentum=0.9)

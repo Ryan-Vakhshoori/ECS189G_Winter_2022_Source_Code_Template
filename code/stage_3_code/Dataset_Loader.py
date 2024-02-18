@@ -3,6 +3,7 @@ import torch.utils.data
 from code.base_class.dataset import dataset
 import pickle
 import torchvision.transforms as transforms
+import numpy as np
 
 class Dataset_Loader(dataset):
     data = None
@@ -18,13 +19,15 @@ class Dataset_Loader(dataset):
         data = pickle.load(f)
         f.close()
         train_data = []
-        transform_norm = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+        transform_norm = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
         for sample in data['train']:
-            image_path = sample['image']
+            image_path = np.array(sample['image'])
+            image_path = image_path.astype(np.float32)
             normal_image = transform_norm(image_path)
             sample['image'] = normal_image
         for sample in data['test']:
-            image_path = sample['image']
+            image_path = np.array(sample['image'])
+            image_path = image_path.astype(np.float32)
             normal_image = transform_norm(image_path)
             sample['image'] = normal_image
 

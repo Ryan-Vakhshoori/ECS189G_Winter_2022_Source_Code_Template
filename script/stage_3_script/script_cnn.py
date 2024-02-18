@@ -17,7 +17,7 @@ if 1:
     # ---- objection initialization section ---------------
     loaded_obj = Dataset_Loader('numbers', '')
     loaded_obj.dataset_source_folder_path = '../../data/stage_3_data/'
-    loaded_obj.dataset_source_file_name = 'ORL'
+    loaded_obj.dataset_source_file_name = 'MNIST'
 
     graph_obj = Graph()
 
@@ -25,7 +25,7 @@ if 1:
 
     result_obj = Result_Saver('saver', '')
     result_obj.result_destination_folder_path = '../../result/stage_3_result/CNN_'
-    result_obj.result_destination_file_name = 'ORL_prediction_result'
+    result_obj.result_destination_file_name = 'MNIST_prediction_result'
 
     setting_obj = ModelExecution('model execution', '')
 
