@@ -67,6 +67,7 @@ class Method_CNN(method, nn.Module):
         optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate)
         loss_function = nn.CrossEntropyLoss()
         resulting_loss = []
+        epochs = []
         for epoch in range(self.max_epoch):  # you can do an early stop if self.max_epoch is too much...
             total_loss = 0.0
             res_loss = 0.0
@@ -84,28 +85,33 @@ class Method_CNN(method, nn.Module):
                 #     print(f'[{epoch + 1}, {i + 1:5d}] loss: {total_loss / 200:.3f}')
                 #     total_loss = 0.0
             resulting_loss.append(res_loss / len(X))
+            epochs.append(epoch)
             print(f'[{epoch + 1}], loss: {res_loss / len(X):.3f}')
-        return resulting_loss
+        return resulting_loss, epochs
 
     def test(self, test_data):
         total = 0
         correct = 0
+        predicted_labels = np.array([])
+        actual_labels = np.array([])
         for data in test_data:
             inputs = data['image']
             labels = data['label']
             outputs = self.forward(inputs)
             _, predicted = torch.max(outputs.data, 1)
+            predicted_labels = np.append(predicted_labels, predicted.numpy())
+            actual_labels = np.append(actual_labels, labels.numpy())
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
         accuracy = correct / total
-        print(f'Test Accuracy: {accuracy}')
-        return accuracy
+        # print(f'Test Accuracy: {accuracy}')
+        return predicted_labels,actual_labels
 
     def run(self):
         accuracy_evaluator = Evaluate_Accuracy('training evaluator', '')
         print('method running...')
         print('--start training...')
-        resulting_loss = self.train(self.data['train_data'])
+        resulting_loss,epochs = self.train(self.data['train_data'])
         print('--start testing...')
-        accuracy_ev = self.test(self.data['test_data'])
-        return resulting_loss, self.max_epoch, accuracy_ev
+        predicted_labels, actual_labels = self.test(self.data['test_data'])
+        return resulting_loss, epochs, predicted_labels, actual_labels

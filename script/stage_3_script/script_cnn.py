@@ -21,7 +21,7 @@ if 1:
 
     graph_obj = Graph()
 
-    method_obj = Method_CNN('MnistModel', '', [], "", "")
+    method_obj = Method_CNN('MNISTModel', '', [], "", "")
 
     result_obj = Result_Saver('saver', '')
     result_obj.result_destination_folder_path = '../../result/stage_3_result/CNN_'
@@ -35,9 +35,17 @@ if 1:
     print('************ Start (Model 1) ************')
     setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
     setting_obj.print_setup_summary()
-    train_results = setting_obj.load_test_data()
-    # train_loss, epoch, accuracy = setting_obj.load_test_data()
-    train_loss = train_results['resulting_loss']
-    epoch = train_results['epochs']
-    accuracy = train_results['accuracy']
+    [accuracy, precision, f1_score, recall], train_loss, epoch = setting_obj.load_test_data()    # train_loss, epoch, accuracy = setting_obj.load_test_data()
+    train_loss = train_loss
+    epoch = epoch
+    accuracy =accuracy
     graph_obj.traininglossgraph(epoch,train_loss)
+
+
+    print('************ Overall Performance ************')
+    print('MNIST Accuracy: ' + str(accuracy))
+    print('MNIST Precision: ' + str(precision))
+    print('MNIST F1 Score: ' + str(f1_score))
+    print('MNIST Recall: ' + str(recall))
+    print('************ Finish ************')
+    graph_obj.traininglossgraph(epoch, train_loss)
