@@ -62,7 +62,7 @@ if 1:
     ## Sai
     method_obj = Method_CNN_CIFAR('CIFARModel', '', [32, 128, 256, 256, 2048, 1024], "", "")
     result_obj.result_destination_file_name = 'CIFAR_prediction_result_3'
-    print('************ Start (Model 2) ************')
+    print('************ Start (Model 3) ************')
     setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
     setting_obj.print_setup_summary()
     [accuracy, precision, f1_score, recall], train_loss, epoch = setting_obj.load_test_data()
