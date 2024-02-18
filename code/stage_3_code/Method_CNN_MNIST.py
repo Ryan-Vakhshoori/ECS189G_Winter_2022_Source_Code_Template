@@ -13,7 +13,7 @@ import torch.nn.functional as F
 import numpy as np
 
 
-class Method_CNN(method, nn.Module):
+class Method_CNN_MNIST(method, nn.Module):
     data = None
     max_epoch = 3
     learning_rate = 1e-3
@@ -21,24 +21,27 @@ class Method_CNN(method, nn.Module):
     def __init__(self, mName, mDescription,hidden_layers, optimizer, activation_function):
         method.__init__(self, mName, mDescription, hidden_layers, optimizer, activation_function)
         nn.Module.__init__(self)
-
+        self.hidden_layers = hidden_layers
+        self.activation_function = activation_function
+        self.optimizer = optimizer
+        (1,20,10)
         self.layer_1 = nn.Sequential(
-            nn.Conv2d(in_channels=1, out_channels=20, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(in_channels=hidden_layers[0], out_channels=hidden_layers[1], kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.Conv2d(in_channels=20, out_channels=20, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(in_channels=hidden_layers[1], out_channels=hidden_layers[1], kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2)
         )
         self.layer_2 = nn.Sequential(
-            nn.Conv2d(in_channels=20, out_channels=20, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(in_channels=hidden_layers[1], out_channels=hidden_layers[1], kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.Conv2d(in_channels=20, out_channels=20, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(in_channels=hidden_layers[1], out_channels=hidden_layers[1], kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2)
         )
         self.layer_3 = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(7 * 7 * 20, 10)
+            nn.Linear(7 * 7 * hidden_layers[1], hidden_layers[2])
         )
 
     def forward(self, x):
@@ -47,24 +50,12 @@ class Method_CNN(method, nn.Module):
         x = self.layer_3(x)
         return F.log_softmax(x, dim=1)
 
-        # self.flatten = nn.Flatten()
-        # self.final_layer = nn.Sequential(
-        #     nn.Linear(49, 50),
-        #     nn.ReLU(),
-        #     nn.Dropout(0.2),
-        #     nn.Linear(50, 10)
-        # )
-
-    # def forward(self, x):
-    #     output = self.layer_1(x)
-    #     output = self.layer_2(output)
-    #     # output = self.layer_3(output)
-    #     output = self.flatten(output)
-    #     output = self.final_layer(output)
-    #     return output
-
     def train(self, X):
-        optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate)
+        if self.optimizer == "adam":
+            optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
+        else:
+            optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate)
+
         loss_function = nn.CrossEntropyLoss()
         resulting_loss = []
         epochs = []
@@ -85,7 +76,7 @@ class Method_CNN(method, nn.Module):
                 #     print(f'[{epoch + 1}, {i + 1:5d}] loss: {total_loss / 200:.3f}')
                 #     total_loss = 0.0
             resulting_loss.append(res_loss / len(X))
-            epochs.append(epoch)
+            epochs.append(epoch + 1)
             print(f'[{epoch + 1}], loss: {res_loss / len(X):.3f}')
         return resulting_loss, epochs
 

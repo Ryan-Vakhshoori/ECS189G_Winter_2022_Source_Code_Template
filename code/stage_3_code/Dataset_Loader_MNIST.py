@@ -5,7 +5,7 @@ import pickle
 import torchvision.transforms as transforms
 import numpy as np
 
-class Dataset_Loader(dataset):
+class Dataset_Loader_MNIST(dataset):
     data = None
     dataset_source_folder_path = None
     dataset_source_file_name = None
@@ -32,8 +32,8 @@ class Dataset_Loader(dataset):
             # normal_image = transform_norm(image_path)
             sample['image'] = transform_norm(sample['image']).to(torch.float32)
 
-        print(data['train'][0])
-        print(data['train'][0]['image'].shape)
+        # print(data['train'][0])
+        # print(data['train'][0]['image'].shape)
         train_data = torch.utils.data.DataLoader(data['train'], shuffle=True, batch_size=32)
         test_data = torch.utils.data.DataLoader(data['test'], shuffle=False, batch_size=32)
         return {'train_data': train_data, 'test_data': test_data}
