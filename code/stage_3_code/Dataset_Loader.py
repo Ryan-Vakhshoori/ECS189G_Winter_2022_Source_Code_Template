@@ -19,20 +19,21 @@ class Dataset_Loader(dataset):
         data = pickle.load(f)
         f.close()
         train_data = []
+        # print(data['train'][0]['image'])
         transform_norm = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
         for sample in data['train']:
-            image_path = np.array(sample['image'])
-            image_path = image_path.astype(np.float32)
-            normal_image = transform_norm(image_path)
-            sample['image'] = normal_image
+            # image_path = np.array(sample['image'])
+            # image_path = image_path.astype(np.float32)
+            # normal_image = transform_norm(image_path)
+            sample['image'] = transform_norm(sample['image']).to(torch.float32)
         for sample in data['test']:
-            image_path = np.array(sample['image'])
-            image_path = image_path.astype(np.float32)
-            normal_image = transform_norm(image_path)
-            sample['image'] = normal_image
+            # image_path = np.array(sample['image'])
+            # image_path = image_path.astype(np.float32)
+            # normal_image = transform_norm(image_path)
+            sample['image'] = transform_norm(sample['image']).to(torch.float32)
 
-        # print(data['train'][0])
-        # print(data['train'][0]['image'].shape)
-        train_data = torch.utils.data.DataLoader(data['train'], shuffle=True)
-        test_data = torch.utils.data.DataLoader(data['test'], shuffle=False)
+        print(data['train'][0])
+        print(data['train'][0]['image'].shape)
+        train_data = torch.utils.data.DataLoader(data['train'], shuffle=True, batch_size=32)
+        test_data = torch.utils.data.DataLoader(data['test'], shuffle=False, batch_size=32)
         return {'train_data': train_data, 'test_data': test_data}

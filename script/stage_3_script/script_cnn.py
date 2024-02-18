@@ -21,7 +21,7 @@ if 1:
 
     graph_obj = Graph()
 
-    method_obj = Method_CNN('ORLModel', '', [], "", "")
+    method_obj = Method_CNN('MnistModel', '', [], "", "")
 
     result_obj = Result_Saver('saver', '')
     result_obj.result_destination_folder_path = '../../result/stage_3_result/CNN_'

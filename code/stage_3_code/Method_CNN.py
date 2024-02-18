@@ -9,12 +9,13 @@ from code.base_class.method import method
 from code.stage_1_code.Evaluate_Accuracy import Evaluate_Accuracy
 import torch
 from torch import nn
+import torch.nn.functional as F
 import numpy as np
 
 
 class Method_CNN(method, nn.Module):
     data = None
-    max_epoch = 5
+    max_epoch = 3
     learning_rate = 1e-3
 
     def __init__(self, mName, mDescription,hidden_layers, optimizer, activation_function):
@@ -22,29 +23,29 @@ class Method_CNN(method, nn.Module):
         nn.Module.__init__(self)
 
         self.layer_1 = nn.Sequential(
-            nn.Conv2d(in_channels=1, out_channels=32, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(in_channels=1, out_channels=20, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.Conv2d(in_channels=32, out_channels=32, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(in_channels=20, out_channels=20, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2)
         )
         self.layer_2 = nn.Sequential(
-            nn.Conv2d(in_channels=32, out_channels=32, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(in_channels=20, out_channels=20, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.Conv2d(in_channels=32, out_channels=32, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(in_channels=20, out_channels=20, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2)
         )
         self.layer_3 = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(7 * 7 * 32, 10)
+            nn.Linear(7 * 7 * 20, 10)
         )
 
     def forward(self, x):
         x = self.layer_1(x)
         x = self.layer_2(x)
         x = self.layer_3(x)
-        return x
+        return F.log_softmax(x, dim=1)
 
         # self.flatten = nn.Flatten()
         # self.final_layer = nn.Sequential(
@@ -63,9 +64,8 @@ class Method_CNN(method, nn.Module):
     #     return output
 
     def train(self, X):
-        optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate, momentum=0.9)
+        optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate)
         loss_function = nn.CrossEntropyLoss()
-        accuracy_evaluator = Evaluate_Accuracy('training evaluator', '')
         resulting_loss = []
         for epoch in range(self.max_epoch):  # you can do an early stop if self.max_epoch is too much...
             total_loss = 0.0
@@ -73,9 +73,9 @@ class Method_CNN(method, nn.Module):
             for i, data in enumerate(X, 0):
                 inputs = data['image']
                 labels = data['label']
+                # print(inputs)
                 output = self.forward(inputs)
                 loss = loss_function(output, labels)
-                # total_loss += loss.item()
                 res_loss += loss.item()
                 optimizer.zero_grad()
                 loss.backward()
@@ -108,4 +108,4 @@ class Method_CNN(method, nn.Module):
         resulting_loss = self.train(self.data['train_data'])
         print('--start testing...')
         accuracy_ev = self.test(self.data['test_data'])
-        return {'resulting_loss': resulting_loss, 'epochs': self.max_epoch, 'accuracy': accuracy_ev}
+        return resulting_loss, self.max_epoch, accuracy_ev
