@@ -14,7 +14,7 @@ import numpy as np
 
 class Method_CNN(method, nn.Module):
     data = None
-    max_epoch = 20
+    max_epoch = 10
     learning_rate = 1e-3
 
     def __init__(self, mName, mDescription,hidden_layers, optimizer, activation_function):
@@ -23,33 +23,34 @@ class Method_CNN(method, nn.Module):
         self.layer_1 = nn.Sequential(
             nn.Conv2d(3, 32, kernel_size=3, padding=1),
             nn.ReLU(),
-            nn.Conv2d(32, 32, kernel_size=3, padding=1),
+            nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2),
-            nn.Dropout(0.2)
+            nn.MaxPool2d(2, 2),
+            nn.BatchNorm2d(64),
         )
         self.layer_2 = nn.Sequential(
-            nn.Conv2d(32, 64, kernel_size=3, padding=1),
+            nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.Conv2d(64, 64, kernel_size=3, padding=1),
+            nn.Conv2d(128, 128, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2),
-            nn.Dropout(0.2)
+            nn.MaxPool2d(2, 2),
+            nn.BatchNorm2d(128),
         )
         self.layer_3 = nn.Sequential(
-            nn.Conv2d(64, 128, kernel_size=3, padding=1),
+            nn.Conv2d(128, 256, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.Conv2d(128, 128, kernel_size=3, padding=1),
+            nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2),
-            nn.Dropout(0.2)
+            nn.MaxPool2d(2, 2),
+            nn.BatchNorm2d(256),
         )
         self.flatten = nn.Flatten()
         self.final_layer = nn.Sequential(
-            nn.Linear(128 * 4 * 4, 128),
+            nn.Linear(256*4*4, 1024),
             nn.ReLU(),
-            nn.Dropout(0.2),
-            nn.Linear(128, 10)
+            nn.Linear(1024, 512),
+            nn.ReLU(),
+            nn.Linear(512, 10),
         )
 
     def forward(self, x):
@@ -62,6 +63,7 @@ class Method_CNN(method, nn.Module):
 
     def train(self, X):
         optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate, momentum=0.9)
+        scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.1)
         loss_function = nn.CrossEntropyLoss()
         accuracy_evaluator = Evaluate_Accuracy('training evaluator', '')
         resulting_loss = []
