@@ -12,7 +12,7 @@ from torch import nn
 import numpy as np
 
 
-class Method_CNN(method, nn.Module):
+class Method_CNN_CIFAR(method, nn.Module):
     data = None
     max_epoch = 10
     learning_rate = 1e-3
@@ -24,7 +24,7 @@ class Method_CNN(method, nn.Module):
         self.hidden_layers = hidden_layers
         self.activation_function = activation_function
         self.optimizer = optimizer
-        print(self.hidden_layers)
+        #print(self.hidden_layers)
         # (32, 64, 128, 256, 1024, 512)
         self.layer_1 = nn.Sequential(
             nn.Conv2d(3, hidden_layers[0], kernel_size=3, padding=1),

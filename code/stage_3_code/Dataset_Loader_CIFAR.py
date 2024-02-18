@@ -4,7 +4,7 @@ from code.base_class.dataset import dataset
 import pickle
 import torchvision.transforms as transforms
 
-class Dataset_Loader(dataset):
+class Dataset_Loader_CIFAR(dataset):
     data = None
     dataset_source_folder_path = None
     dataset_source_file_name = None
