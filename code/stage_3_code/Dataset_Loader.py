@@ -20,10 +20,12 @@ class Dataset_Loader(dataset):
         train_data = []
         transform_norm = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
         for sample in data['train']:
+            sample['label'] = sample['label'] - 1
             image_path = sample['image']
             normal_image = transform_norm(image_path)
             sample['image'] = normal_image
         for sample in data['test']:
+            sample['label'] = sample['label'] - 1
             image_path = sample['image']
             normal_image = transform_norm(image_path)
             sample['image'] = normal_image

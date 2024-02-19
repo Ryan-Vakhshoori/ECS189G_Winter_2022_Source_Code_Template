@@ -14,42 +14,46 @@ import numpy as np
 
 class Method_CNN(method, nn.Module):
     data = None
-    max_epoch = 100
+    max_epoch = 50
     learning_rate = 1e-3
 
     def __init__(self, mName, mDescription,hidden_layers, optimizer, activation_function):
         method.__init__(self, mName, mDescription, hidden_layers, optimizer, activation_function)
         nn.Module.__init__(self)
+
+        self.hidden_layers = hidden_layers
+        self.activation_function = activation_function
+        self.optimizer = optimizer
         self.layer_1 = nn.Sequential(
-            nn.Conv2d(3, 32, kernel_size=3, padding=1),
+            nn.Conv2d(3, hidden_layers[0], kernel_size=3, padding=1),
             nn.ReLU(),
-            nn.Conv2d(32, 32, kernel_size=3, padding=1),
+            nn.Conv2d(hidden_layers[0], hidden_layers[0], kernel_size=3, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2),
             nn.Dropout(0.2)
         )
         self.layer_2 = nn.Sequential(
-            nn.Conv2d(32, 64, kernel_size=3, padding=1),
+            nn.Conv2d(hidden_layers[0], hidden_layers[1], kernel_size=3, padding=1),
             nn.ReLU(),
-            nn.Conv2d(64, 64, kernel_size=3, padding=1),
+            nn.Conv2d(hidden_layers[1], hidden_layers[1], kernel_size=3, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2),
             nn.Dropout(0.2)
         )
         self.layer_3 = nn.Sequential(
-            nn.Conv2d(64, 128, kernel_size=3, padding=1),
+            nn.Conv2d(hidden_layers[1], hidden_layers[2], kernel_size=3, padding=1),
             nn.ReLU(),
-            nn.Conv2d(128, 128, kernel_size=3, padding=1),
+            nn.Conv2d(hidden_layers[2], hidden_layers[2], kernel_size=3, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2),
             nn.Dropout(0.2)
         )
         self.flatten = nn.Flatten()
         self.final_layer = nn.Sequential(
-            nn.Linear(19712, 128),
+            nn.Linear(hidden_layers[3], hidden_layers[2]),
             nn.ReLU(),
             nn.Dropout(0.2),
-            nn.Linear(128, 41)
+            nn.Linear(hidden_layers[2], 40)
         )
 
     def forward(self, x):
@@ -61,10 +65,13 @@ class Method_CNN(method, nn.Module):
         return output
 
     def train(self, X):
-        optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate, momentum=0.9)
+        if self.optimizer == "adam":
+            optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
+        else:
+            optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate, momentum=0.9)
         loss_function = nn.CrossEntropyLoss()
-        accuracy_evaluator = Evaluate_Accuracy('training evaluator', '')
         resulting_loss = []
+        epochs = []
         for epoch in range(self.max_epoch):  # you can do an early stop if self.max_epoch is too much...
             total_loss = 0.0
             res_loss = 0.0
@@ -82,28 +89,32 @@ class Method_CNN(method, nn.Module):
                 #     print(f'[{epoch + 1}, {i + 1:5d}] loss: {total_loss / 200:.3f}')
                 #     total_loss = 0.0
             resulting_loss.append(res_loss / len(X))
+            epochs.append(epoch)
             print(f'[{epoch + 1}], loss: {res_loss / len(X):.3f}')
-        return resulting_loss
+        return resulting_loss, epochs
 
     def test(self, test_data):
         total = 0
         correct = 0
+        predicted_labels = np.array([])
+        actual_labels = np.array([])
         for data in test_data:
             inputs = data['image']
             labels = data['label']
             outputs = self.forward(inputs)
             _, predicted = torch.max(outputs.data, 1)
+            predicted_labels = np.append(predicted_labels, predicted.numpy())
+            actual_labels = np.append(actual_labels, labels.numpy())
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
         accuracy = correct / total
-        print(f'Test Accuracy: {accuracy}')
-        return accuracy
+        return predicted_labels, actual_labels
 
     def run(self):
         accuracy_evaluator = Evaluate_Accuracy('training evaluator', '')
         print('method running...')
         print('--start training...')
-        resulting_loss = self.train(self.data['train_data'])
+        resulting_loss, epochs = self.train(self.data['train_data'])
         print('--start testing...')
-        accuracy_ev = self.test(self.data['test_data'])
-        return {'resulting_loss': resulting_loss, 'epochs': self.max_epoch, 'accuracy': accuracy_ev}
+        predicted_labels, actual_labels = self.test(self.data['test_data'])
+        return resulting_loss, epochs, predicted_labels, actual_labels

@@ -21,7 +21,7 @@ if 1:
 
     graph_obj = Graph()
 
-    method_obj = Method_CNN('ORLModel', '', [], "", "")
+    method_obj = Method_CNN('ORLModel', '', [32, 64, 128, 19712], "", "")
 
     result_obj = Result_Saver('saver', '')
     result_obj.result_destination_folder_path = '../../result/stage_3_result/CNN_'
@@ -32,12 +32,42 @@ if 1:
     evaluate_obj = Evaluation_Metrics('accuracy', '')
     # ------------------------------------------------------
 
-    print('************ Start (Model 1) ************')
+    # print('************ Start (Model 1) ************')
+    # setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
+    # setting_obj.print_setup_summary()
+    # [accuracy, precision, f1_score, recall], train_loss, epoch = setting_obj.load_test_data()
+    # print('************ Overall Performance ************')
+    # print('ORL Accuracy: ' + str(accuracy))
+    # print('ORL Precision: ' + str(precision))
+    # print('ORL F1 Score: ' + str(f1_score))
+    # print('ORL Recall: ' + str(recall))
+    # print('************ Finish ************')
+    # graph_obj.traininglossgraph(epoch, train_loss)
+
+    # method_obj = Method_CNN('ORLModel', '', [32, 128, 256, 39424], "", "")
+    # result_obj.result_destination_file_name = 'ORL_prediction_result_2'
+    # print('************ Start (Model 2) ************')
+    # setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
+    # setting_obj.print_setup_summary()
+    # [accuracy, precision, f1_score, recall], train_loss, epoch = setting_obj.load_test_data()
+    # print('************ Overall Performance ************')
+    # print('ORL Accuracy: ' + str(accuracy))
+    # print('ORL Precision: ' + str(precision))
+    # print('ORL F1 Score: ' + str(f1_score))
+    # print('ORL Recall: ' + str(recall))
+    # print('************ Finish ************')
+    # graph_obj.traininglossgraph(epoch, train_loss)
+
+    method_obj = Method_CNN('ORLModel', '', [16, 32, 64, 9856], "", "")
+    result_obj.result_destination_file_name = 'ORL_prediction_result_2'
+    print('************ Start (Model 3) ************')
     setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
     setting_obj.print_setup_summary()
-    train_results = setting_obj.load_test_data()
-    # train_loss, epoch, accuracy = setting_obj.load_test_data()
-    train_loss = train_results['resulting_loss']
-    epoch = train_results['epochs']
-    accuracy = train_results['accuracy']
-    graph_obj.traininglossgraph(epoch,train_loss)
+    [accuracy, precision, f1_score, recall], train_loss, epoch = setting_obj.load_test_data()
+    print('************ Overall Performance ************')
+    print('ORL Accuracy: ' + str(accuracy))
+    print('ORL Precision: ' + str(precision))
+    print('ORL F1 Score: ' + str(f1_score))
+    print('ORL Recall: ' + str(recall))
+    print('************ Finish ************')
+    graph_obj.traininglossgraph(epoch, train_loss)
