@@ -1,6 +1,7 @@
 from code.base_class.dataset import dataset
 import os
-
+import nltk
+from nltk.tokenize import word_tokenize
 
 class Dataset_Loader(dataset):
     data = None
@@ -13,14 +14,18 @@ class Dataset_Loader(dataset):
     def load(self):
         print('loading data...')
         neg_directory = self.dataset_source_folder_path + '/neg'
-        i = 0
         for filename in os.listdir(neg_directory):
-            i += 1
             f = os.path.join(neg_directory, filename)
+            file = open(f, 'rt')
+            text = file.read()
+            file.close()
+            # split into words by white space
+            tokens = word_tokenize(text)
+            words = [word for word in tokens if word.isalpha()]
+            print(words[:100])
             # checking if it is a file
             if os.path.isfile(f):
                 print(f)
-        print(i)
         # X = []
         # y = []
         # f = open(self.dataset_source_folder_path + '/neg, 'r')
