@@ -17,8 +17,9 @@ class Dataset_Loader(dataset):
     def clean(self, directory, sentiment):
         data = []
         for filename in os.listdir(directory):
+            # print(filename)
             f = os.path.join(directory, filename)
-            file = open(f, 'rt')
+            file = open(f, 'rt', encoding='utf-8')
             text = file.read()
             file.close()
             # split into words by white space
@@ -35,11 +36,13 @@ class Dataset_Loader(dataset):
             words = [w for w in words if not w in stop_words]
             porter = PorterStemmer()
             stemmed = [porter.stem(word) for word in words]
+            stemmed = ' '.join(stemmed)
+            # print(stemmed)
             if sentiment == 'positive':
-                data.append({'words': stemmed, 'label': 1})
+                data.append({'text': stemmed, 'label': 1})
             else:
-                data.append({'words': stemmed, 'label': 0})
-
+                data.append({'text': stemmed, 'label': 0})
+            break
         return data
 
     def load(self):
@@ -48,10 +51,11 @@ class Dataset_Loader(dataset):
         train_pos_directory = self.dataset_source_folder_path + '/train/pos'
         test_neg_directory = self.dataset_source_folder_path + '/test/neg'
         test_pos_directory = self.dataset_source_folder_path + '/test/pos'
-        data = {"train": [self.clean(train_neg_directory, "negative") +
-                          self.clean(train_pos_directory, "positive")],
-                "test": [self.clean(test_neg_directory, "negative") +
-                         self.clean(test_pos_directory, "positive")]}
-        train_data = torch.utils.data.DataLoader(data['train'], batch_size=64, shuffle=True)
-        test_data = torch.utils.data.DataLoader(data['test'], batch_size=64, shuffle=False)
+        train_data = [self.clean(train_neg_directory, "negative") +
+                          self.clean(train_pos_directory, "positive")]
+        test_data = [self.clean(test_neg_directory, "negative") +
+                         self.clean(test_pos_directory, "positive")]
+
+        train_data = torch.utils.data.DataLoader(train_data, batch_size=64, shuffle=True)
+        test_data = torch.utils.data.DataLoader(test_data, batch_size=64, shuffle=False)
         return {'train_data': train_data, 'test_data': test_data}
