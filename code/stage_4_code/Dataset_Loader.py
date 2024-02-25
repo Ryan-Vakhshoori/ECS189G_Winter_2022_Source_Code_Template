@@ -4,6 +4,7 @@ from nltk.tokenize import word_tokenize
 import string
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
+import torch.utils.data
 
 class Dataset_Loader(dataset):
     data = None
@@ -13,11 +14,10 @@ class Dataset_Loader(dataset):
     def __init__(self, dName=None, dDescription=None):
         super().__init__(dName, dDescription)
 
-    def load(self):
-        print('loading data...')
-        neg_directory = self.dataset_source_folder_path + '/neg'
-        for filename in os.listdir(neg_directory):
-            f = os.path.join(neg_directory, filename)
+    def clean(self, directory, sentiment):
+        data = []
+        for filename in os.listdir(directory):
+            f = os.path.join(directory, filename)
             file = open(f, 'rt')
             text = file.read()
             file.close()
@@ -35,17 +35,23 @@ class Dataset_Loader(dataset):
             words = [w for w in words if not w in stop_words]
             porter = PorterStemmer()
             stemmed = [porter.stem(word) for word in words]
-            print(stemmed[:100])
-            # checking if it is a file
-            if os.path.isfile(f):
-                print(f)
-        # X = []
-        # y = []
-        # f = open(self.dataset_source_folder_path + '/neg, 'r')
-        # for line in f:
-        #     line = line.strip('\n')
-        #     elements = [int(i) for i in line.split(' ')]
-        #     X.append(elements[:-1])
-        #     y.append(elements[-1])
-        # f.close()
-        # return {'X': X, 'y': y}
+            if sentiment == 'positive':
+                data.append({'words': stemmed, 'label': 1})
+            else:
+                data.append({'words': stemmed, 'label': 0})
+
+        return data
+
+    def load(self):
+        print('loading data...')
+        train_neg_directory = self.dataset_source_folder_path + '/train/neg'
+        train_pos_directory = self.dataset_source_folder_path + '/train/pos'
+        test_neg_directory = self.dataset_source_folder_path + '/test/neg'
+        test_pos_directory = self.dataset_source_folder_path + '/test/pos'
+        data = {"train": [self.clean(train_neg_directory, "negative") +
+                          self.clean(train_pos_directory, "positive")],
+                "test": [self.clean(test_neg_directory, "negative") +
+                         self.clean(test_pos_directory, "positive")]}
+        train_data = torch.utils.data.DataLoader(data['train'], batch_size=64, shuffle=True)
+        test_data = torch.utils.data.DataLoader(data['test'], batch_size=64, shuffle=False)
+        return {'train_data': train_data, 'test_data': test_data}

@@ -12,10 +12,8 @@ if 1:
     #------------------------------------------------------
 
     #---- objection initialization section ---------------
-    train_data_obj = Dataset_Loader('reviews', '')
-    train_data_obj.dataset_source_folder_path = '../../data/stage_4_data/text_classification/train'
-    test_data_obj = Dataset_Loader('numbers', '')
-    test_data_obj.dataset_source_folder_path = '../../data/stage_4_data/text_classification/test'
+    loaded_obj = Dataset_Loader('reviews', '')
+    loaded_obj.dataset_source_folder_path = '../../data/stage_4_data/text_classification'
 
     method_obj = Method_RNN()
 
@@ -26,6 +24,6 @@ if 1:
     evaluate_obj = Evaluation_Metrics('accuracy, precision, f1 score, recall', '')
 
     result_obj.result_destination_file_name = 'prediction_result_1'
-    setting_obj.prepare(train_data_obj, method_obj, result_obj, evaluate_obj)
+    setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
     setting_obj.print_setup_summary()
     epoch, train_loss = setting_obj.load_run()
