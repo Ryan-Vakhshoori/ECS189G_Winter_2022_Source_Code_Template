@@ -12,12 +12,15 @@ class Dataset_Loader(dataset):
 
     def load(self):
         print('loading data...')
-        neg_directory = self.direct_source_folder_path + '/neg'
+        neg_directory = self.dataset_source_folder_path + '/neg'
+        i = 0
         for filename in os.listdir(neg_directory):
+            i += 1
             f = os.path.join(neg_directory, filename)
             # checking if it is a file
             if os.path.isfile(f):
                 print(f)
+        print(i)
         # X = []
         # y = []
         # f = open(self.dataset_source_folder_path + '/neg, 'r')

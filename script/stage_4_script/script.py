@@ -27,3 +27,5 @@ if 1:
 
     result_obj.result_destination_file_name = 'prediction_result_1'
     setting_obj.prepare(train_data_obj, method_obj, result_obj, evaluate_obj)
+    setting_obj.print_setup_summary()
+    epoch, train_loss = setting_obj.load_run()
