@@ -13,25 +13,27 @@ import numpy as np
 from transformers import BertTokenizer, BertModel
 
 
-class Method_CNN_CIFAR(method, nn.Module):
+class Method_RNN_TC(method, nn.Module):
     data = None
     max_epoch = 10
     learning_rate = 1e-3
 
-    def __init__(self, mName, mDescription,hidden_layers, optimizer, activation_function):
-        method.__init__(self, mName, mDescription, hidden_layers, optimizer, activation_function)
+    def __init__(self, mName, mDescription, hidden_size, num_layers, optimizer, activation_function):
+        method.__init__(self, mName, mDescription, hidden_size, optimizer, activation_function)
         nn.Module.__init__(self)
 
-        self.hidden_layers = hidden_layers
-        self.activation_function = activation_function
+        self.hidden_size = hidden_size
+        self.num_layers = num_layers
         self.optimizer = optimizer
-        #print(self.hidden_layers)
-        # (32, 64, 128, 256, 1024, 512)
-        self.rnn = nn.RNN()
 
+        self.embedding = nn.Embedding(len(self.data['TEXT'].vocab), self.hidden_size)
+        self.rnn = nn.RNN(input_size=self.hidden_size, hidden_size=self.hidden_size, num_layers=self.num_layers, batch_first=True)
+        self.fc = nn.Linear(self.hidden_size, 2)
 
     def forward(self, x):
-        output = self.layer_1(x)
+        x = self.embedding(x)
+        output, _ = self.rnn(x)
+        output = self.fc(output[:, -1, :])
         return output
 
     def train(self, X):
@@ -43,9 +45,7 @@ class Method_CNN_CIFAR(method, nn.Module):
         print(self.optimizer)
         resulting_loss = []
         epochs = []
-        tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-        model = BertModel.from_pretrained('bert-base-uncased')
-        for epoch in range(self.max_epoch):  # you can do an early stop if self.max_epoch is too much...
+        for epoch in range(self.max_epoch):
             total_loss = 0.0
             res_loss = 0.0
             for i, data in enumerate(X, 0):
@@ -63,12 +63,10 @@ class Method_CNN_CIFAR(method, nn.Module):
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
-                # if i % 200 == 199:  # print every 2000 mini-batches
-                #     print(f'[{epoch + 1}, {i + 1:5d}] loss: {total_loss / 200:.3f}')
-                #     total_loss = 0.0
             resulting_loss.append(res_loss / len(X))
             epochs.append(epoch)
             print(f'[{epoch + 1}], loss: {res_loss / len(X):.3f}')
+
         return resulting_loss, epochs
 
     def test(self, test_data):
@@ -76,15 +74,17 @@ class Method_CNN_CIFAR(method, nn.Module):
         correct = 0
         predicted_labels = np.array([])
         actual_labels = np.array([])
-        for data in test_data:
-            inputs = data['image']
-            labels = data['label']
-            outputs = self.forward(inputs)
-            _, predicted = torch.max(outputs.data, 1)
-            predicted_labels = np.append(predicted_labels, predicted.numpy())
-            actual_labels = np.append(actual_labels, labels.numpy())
-            total += labels.size(0)
-            correct += (predicted == labels).sum().item()
+        with torch.no_grad():
+            for data in test_data:
+                inputs = data.text[0]
+                labels = data.label
+                outputs = self.forward(inputs)
+                _, predicted = torch.max(outputs.data, 1)
+                predicted_labels = np.append(predicted_labels, predicted.numpy())
+                actual_labels = np.append(actual_labels, labels.numpy())
+                total += labels.size(0)
+                correct += (predicted == labels).sum().item()
+
         accuracy = correct / total
         return predicted_labels, actual_labels
 

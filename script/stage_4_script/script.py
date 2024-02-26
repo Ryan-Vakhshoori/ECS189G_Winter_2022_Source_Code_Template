@@ -16,15 +16,15 @@ if 1:
     loaded_obj.dataset_source_folder_path = '../../data/stage_4_data/text_classification'
     new_data = loaded_obj.load()
     print(new_data)
-    # method_obj = Method_RNN()
-    #
-    # result_obj = Result_Saver('saver', '')
-    # result_obj.result_destination_folder_path = '../../result/stage_4_result/RNN_'
-    # result_obj.result_destination_file_name = 'prediction_result'
-    # setting_obj = ModelExecution('model execution', '')
-    # evaluate_obj = Evaluation_Metrics('accuracy, precision, f1 score, recall', '')
-    #
-    # result_obj.result_destination_file_name = 'prediction_result_1'
-    # setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
-    # setting_obj.print_setup_summary()
-    # epoch, train_loss = setting_obj.load_run()
+    method_obj = Method_RNN()
+
+    result_obj = Result_Saver('saver', '')
+    result_obj.result_destination_folder_path = '../../result/stage_4_result/RNN_'
+    result_obj.result_destination_file_name = 'prediction_result'
+    setting_obj = ModelExecution('model execution', '')
+    evaluate_obj = Evaluation_Metrics('accuracy, precision, f1 score, recall', '')
+
+    result_obj.result_destination_file_name = 'prediction_result_1'
+    setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
+    setting_obj.print_setup_summary()
+    epoch, train_loss = setting_obj.load_run()
