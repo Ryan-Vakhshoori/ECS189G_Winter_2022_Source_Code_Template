@@ -10,12 +10,12 @@ from code.stage_1_code.Evaluate_Accuracy import Evaluate_Accuracy
 import torch
 from torch import nn
 import numpy as np
-from transformers import BertTokenizer, BertModel
+
 
 
 class Method_RNN_TC(method, nn.Module):
     data = None
-    max_epoch = 10
+    max_epoch = 5
     learning_rate = 1e-3
 
     def __init__(self, mName, mDescription, hidden_size, num_layers, optimizer, activation_function):
@@ -25,15 +25,14 @@ class Method_RNN_TC(method, nn.Module):
         self.hidden_size = hidden_size
         self.num_layers = num_layers
         self.optimizer = optimizer
-
-        self.embedding = nn.Embedding(len(self.data['TEXT'].vocab), self.hidden_size)
-        self.rnn = nn.RNN(input_size=self.hidden_size, hidden_size=self.hidden_size, num_layers=self.num_layers, batch_first=True)
-        self.fc = nn.Linear(self.hidden_size, 2)
+        self.rnn = nn.RNN(input_size=768, hidden_size=200, num_layers=2, batch_first=True)
+        self.fc = nn.Linear(200, 1)
+        self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
-        x = self.embedding(x)
         output, _ = self.rnn(x)
         output = self.fc(output[:, -1, :])
+        output = self.sigmoid(output)
         return output
 
     def train(self, X):
@@ -41,7 +40,7 @@ class Method_RNN_TC(method, nn.Module):
             optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
         else:
             optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate, momentum=0.9)
-        loss_function = nn.CrossEntropyLoss()
+        loss_function = nn.BCELoss()
         print(self.optimizer)
         resulting_loss = []
         epochs = []
@@ -51,17 +50,13 @@ class Method_RNN_TC(method, nn.Module):
             for i, data in enumerate(X, 0):
                 inputs = data['text']
                 labels = data['label']
-                tokens = tokenizer.batch_encode_plus(inputs, padding=True, truncation=True, return_tensors='pt',
-                                                     add_special_tokens=True)
-                inputs = model(tokens['inputs_ids'], attention_mask=tokens['attention_mask'])
-                inputs = inputs.last_hidden_state
-                print(f"Print the shape of the input batch: {inputs.shape}")
+                # print(f"Print the shape of the input batch: {inputs.shape}")
                 output = self.forward(inputs)
-                loss = loss_function(output, labels)
+                loss = loss_function(output.squeeze(), labels.float())
                 # total_loss += loss.item()
                 res_loss += loss.item()
                 optimizer.zero_grad()
-                loss.backward()
+                loss.backward(retain_graph=True)
                 optimizer.step()
             resulting_loss.append(res_loss / len(X))
             epochs.append(epoch)
@@ -76,16 +71,17 @@ class Method_RNN_TC(method, nn.Module):
         actual_labels = np.array([])
         with torch.no_grad():
             for data in test_data:
-                inputs = data.text[0]
-                labels = data.label
+                inputs = data['text']
+                labels = data['label']
                 outputs = self.forward(inputs)
-                _, predicted = torch.max(outputs.data, 1)
+                predicted = torch.tensor([1 if i == True else 0 for i in outputs > 0.5])
                 predicted_labels = np.append(predicted_labels, predicted.numpy())
                 actual_labels = np.append(actual_labels, labels.numpy())
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
 
         accuracy = correct / total
+        print(f'Test Accuracy: {accuracy}')
         return predicted_labels, actual_labels
 
     def run(self):
