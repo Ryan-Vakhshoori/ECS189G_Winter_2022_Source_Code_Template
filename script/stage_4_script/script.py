@@ -1,4 +1,4 @@
-from code.stage_4_code.Dataset_Loader_TC import Dataset_Loader
+from code.stage_4_code.Dataset_Loader_TG import Dataset_Loader
 from code.stage_4_code.Method_RNN_TC import Method_RNN_TC
 from code.stage_4_code.Result_Saver import Result_Saver
 from code.stage_4_code.ModelExecution import ModelExecution
@@ -14,9 +14,10 @@ if 1:
 
     #---- objection initialization section ---------------
     loaded_obj = Dataset_Loader('reviews', '')
-    loaded_obj.dataset_source_folder_path = '../../data/stage_4_data/text_classification'
-    #new_data = loaded_obj.load()
-    # print(new_data)
+    loaded_obj.dataset_source_folder_path = '../../data/stage_4_data/text_generation'
+    loaded_obj.dataset_source_file_name = '/data'
+    new_data = loaded_obj.load()
+
     graph_obj = Graph()
     method_obj = Method_RNN_TC('RNNModel', '', [], "", "adam", "")
 
