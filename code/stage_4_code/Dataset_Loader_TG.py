@@ -1,9 +1,25 @@
 import string
 
 import torch
+import torch.utils.data
+from torch.utils.data import Dataset
 
 from code.base_class.dataset import dataset
 import pandas as pd
+
+class CustomDataset(Dataset):
+    def __init__(self, data):
+        self.data = data
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, idx):
+        sample = self.data[idx]
+        features = torch.stack(sample['input'])  # Stack list of tensors into a single tensor
+        label = sample['target']
+        return features, label
+
 class Dataset_Loader(dataset):
     data = None
     dataset_source_folder_path = None
@@ -12,64 +28,9 @@ class Dataset_Loader(dataset):
     def __init__(self, dName=None, dDescription=None):
         super().__init__(dName, dDescription)
 
-    import numpy as np
-    import torch
-    from torch.nn.functional import one_hot
-
-    # Load jokes dataset from file
-    # def load_jokes_dataset(file_path):
-    #     jokes = []
-    #     with open(file_path, 'r', encoding='utf-8') as file:
-    #         next(file)  # Skip header
-    #         for line in file:
-    #             joke = line.strip().split(',')[1]
-    #             jokes.append(joke)
-    #     return jokes
-    #
-    # # Jokes dataset file path
-    # file_path = 'jokes_dataset.csv'  # Update with the actual file path
-    #
-    # # Load jokes dataset
-    # jokes = load_jokes_dataset(file_path)
-    #
-    # # Tokenize the jokes and create vocabulary
-    # word_to_idx = {}
-    # idx_to_word = {}
-    # for joke in jokes:
-    #     tokens = joke.lower().split()
-    #     for token in tokens:
-    #         if token not in word_to_idx:
-    #             idx = len(word_to_idx)
-    #             word_to_idx[token] = idx
-    #             idx_to_word[idx] = token
-    #
-    # # Convert jokes to one-hot encoded tensors
-    # def encode_jokes(jokes, word_to_idx):
-    #     encoded_jokes = []
-    #     for joke in jokes:
-    #         tokens = joke.lower().split()
-    #         encoded_joke = [word_to_idx[token] for token in tokens if token in word_to_idx]
-    #         encoded_jokes.append(encoded_joke)
-    #     return encoded_jokes
-    #
-    # encoded_jokes = encode_jokes(jokes, word_to_idx)
-    #
-    # # Maximum length of jokes
-    # max_length = max(len(joke) for joke in encoded_jokes)
-    #
-    # # One-hot encode the jokes
-    # def one_hot_encode(encoded_jokes, vocab_size, max_length):
-    #     one_hot_encode
-    # def tokenize_joke(self, joke):
-    #     # Tokenize by whitespace and punctuation
-    #     joke_tokens = joke.lower().translate(str.maketrans('', '', string.punctuation)).split()
-    #     return joke_tokens
-
     def tokenize_joke(self, joke):
         joke_tokens = joke.lower().split()  # Splitting without removing punctuation
         return joke_tokens
-
-
     def load(self):
         file_path = self.dataset_source_folder_path + self.dataset_source_file_name
 
@@ -79,9 +40,12 @@ class Dataset_Loader(dataset):
         for joke in df['Joke']:
             joke_tokens = self.tokenize_joke(joke)
             all_tokens.extend(joke_tokens)
-
+        all_tokens.append('<eos>')
         vocab = sorted(set(all_tokens))
         vocab_size = len(vocab)
+
+
+
         word_to_idx = {word: idx for idx, word in enumerate(vocab)}
         idx_to_word = {idx: word for idx, word in enumerate(vocab)}
 
@@ -98,9 +62,7 @@ class Dataset_Loader(dataset):
         one_hot_to_word = {tuple(one_hot.numpy().tolist()): word for word, one_hot in word_to_one_hot.items()}
 
         def create_training_data():
-            dataX = []
-            dataY = []
-            jok = 0
+            data = []
             for joke in df['Joke']:
                 joke_tokens = self.tokenize_joke(joke)
                 joke_length = len(joke_tokens)
@@ -108,19 +70,42 @@ class Dataset_Loader(dataset):
                     seq_in = joke_tokens[:i + 1]  # Sequence includes tokens up to the current token
 
                     seq_out = joke_tokens[i + 1]  # Next token is the output
-                    dataX.append([word_to_one_hot[token] for token in seq_in])
-                    dataY.append(word_to_one_hot[seq_out])
-            n_patterns = len(dataX)
-            return dataX, dataY
+                    encoding =[word_to_one_hot[token] for token in seq_in]
+                    data.append({'input':torch.stack(encoding), 'target':torch.tensor(word_to_one_hot[seq_out])})
+                   # print(len(seq_in), len(seq_out))
+            return data
 
-        training_data_X, training_data_Y = create_training_data()
-
-        word = one_hot_to_word[tuple(training_data_X[0][0].numpy().tolist())]
-        print(word, end=" ")
-        word2 = one_hot_to_word[tuple(training_data_Y[0].numpy().tolist())]
-        print(word2, end=" ")
+        train_data= create_training_data()
 
 
+        # final_train_data = []
+        # for example in train_data:
+        #
+        #     for tensor in example['input']:
+        #         if tensor.numel() == 1:
+        #             print(tensor.item())
+        #         if len(tensor) == 0:
+        #             print("empty")
+        #         # else:
+        #         #     print(tensor)
+        #     # tensor = torch.tensor(example['input'])
+        #     # print(tensor)
+        #     # final_train_data.append({
+        #     #     'input':torch.tensor(example['input'])
+        #     # })
+        #     # break;
+        #
 
 
-        return {'train_data': training_data_X, 'test_data': training_data_Y}
+        # train_data = CustomDataset(train_data)
+
+        train_data = torch.utils.data.DataLoader(train_data, batch_size=1, shuffle=False)
+
+        # for batch in train_data:
+        #     print(batch['input'].size(), batch['target'].size())
+
+
+
+
+
+        return {'train_data': train_data, 'word_to_one_hot':word_to_one_hot, 'one_hot_to_word':one_hot_to_word}
