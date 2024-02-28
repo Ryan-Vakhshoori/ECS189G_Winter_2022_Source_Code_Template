@@ -48,7 +48,8 @@ class Method_RNN_TC(method, nn.Module):
             total_loss = 0.0
             res_loss = 0.0
             for i, data in enumerate(X, 0):
-                inputs = data['text']
+                inputs = data['embedding']
+                print(type(inputs))
                 labels = data['label']
                 # print(f"Print the shape of the input batch: {inputs.shape}")
                 output = self.forward(inputs)
@@ -71,7 +72,7 @@ class Method_RNN_TC(method, nn.Module):
         actual_labels = np.array([])
         with torch.no_grad():
             for data in test_data:
-                inputs = data['text']
+                inputs = data['embedding']
                 labels = data['label']
                 outputs = self.forward(inputs)
                 predicted = torch.tensor([1 if i == True else 0 for i in outputs > 0.5])
