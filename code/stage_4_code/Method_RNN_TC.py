@@ -47,9 +47,9 @@ class Method_RNN_TC(method, nn.Module):
         for epoch in range(self.max_epoch):
             total_loss = 0.0
             res_loss = 0.0
-            for i, data in enumerate(X, 0):
-                inputs = data['text']
-                labels = data['label']
+            for i, (inputs, labels) in enumerate(X, 0):
+                # inputs = data['text']
+                # labels = data['label']
                 # print(f"Print the shape of the input batch: {inputs.shape}")
                 output = self.forward(inputs)
                 loss = loss_function(output.squeeze(), labels.float())
@@ -70,9 +70,9 @@ class Method_RNN_TC(method, nn.Module):
         predicted_labels = np.array([])
         actual_labels = np.array([])
         with torch.no_grad():
-            for data in test_data:
-                inputs = data['text']
-                labels = data['label']
+            for inputs, labels in test_data:
+                # inputs = data['text']
+                # labels = data['label']
                 outputs = self.forward(inputs)
                 predicted = torch.tensor([1 if i == True else 0 for i in outputs > 0.5])
                 predicted_labels = np.append(predicted_labels, predicted.numpy())

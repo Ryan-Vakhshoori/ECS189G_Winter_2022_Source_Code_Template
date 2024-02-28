@@ -10,6 +10,15 @@ from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 import numpy as np
 import pandas as pd
+class CustomDataset(torch.utils.data.Dataset):
+    def __init__(self, dataframe):
+        self.data = dataframe
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, idx):
+        return self.data.loc[idx, 'text'], self.data.loc[idx, 'label']
 
 class Dataset_Loader(dataset):
     data = None
@@ -48,25 +57,26 @@ class Dataset_Loader(dataset):
                 data.append({'text': stemmed, 'label': torch.tensor(1)})
             else:
                 data.append({'text': stemmed, 'label': torch.tensor(0)})
+            break
         return data, max_len
 
-    def batches_embeddings(self, batch):
-        X, Y = [], []
-        tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-        model = BertModel.from_pretrained('bert-base-uncased')
-        # print(X)
-        for item in batch:
-            text = item['text']
-            label = item['label']
-            # 1
-            X.append(text)
-            Y.append(label)
-        tokens = tokenizer.batch_encode_plus(X, padding='longest', truncation=True, return_tensors='pt',
-                                             add_special_tokens=True)
-        inputs = model(tokens['input_ids'], attention_mask=tokens['attention_mask'])
-        X = inputs.last_hidden_state
-        Y = torch.tensor(Y)
-        return {'text': X, 'label': Y}
+    # def batches_embeddings(self, batch):
+    #     X, Y = [], []
+    #     tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+    #     model = BertModel.from_pretrained('bert-base-uncased')
+    #     # print(X)
+    #     for item in batch:
+    #         text = item['text']
+    #         label = item['label']
+    #         # 1
+    #         X.append(text)
+    #         Y.append(label)
+    #     tokens = tokenizer.batch_encode_plus(X, padding='longest', truncation=True, return_tensors='pt',
+    #                                          add_special_tokens=True)
+    #     inputs = model(tokens['input_ids'], attention_mask=tokens['attention_mask'])
+    #     X = inputs.last_hidden_state
+    #     Y = torch.tensor(Y)
+    #     return {'text': X, 'label': Y}
 
     def embedding_text(self, data, max_len):
         df = pd.DataFrame(data)
@@ -101,10 +111,13 @@ class Dataset_Loader(dataset):
             embedded_seq = np.array(embedded_seq)
             embedded_seq = torch.tensor(embedded_seq, dtype=torch.float32)
             embedded_sequences.append(embedded_seq)
-
+        print(f'Embedded Sequences: {len(embedded_sequences)}')
         df['text'] = embedded_sequences
-        df_dict = df.to_dict(orient='records')
-        return df_dict
+        # df_dict = df.to_dict(orient='records')
+        # print(len(df_dict))
+        print(df['text'].shape)
+        print(df['label'].shape)
+        return df
 
     def load(self):
         print('loading data...')
@@ -121,25 +134,14 @@ class Dataset_Loader(dataset):
         self.max_length = max(test_max_len_pos, test_max_len_neg,train_max_len_pos, train_max_len_neg)
         train_data = self.embedding_text(train_data, self.max_length)
         test_data = self.embedding_text(test_data, self.max_length)
-        # print(train_data)
-        # print(test_data)
-        # GET PLAIN TEXT FROM THEM
-        # train_text = self.get_plain_text(train_data)
-        # test_text = self.get_plain_text(test_data)
-        #
-        # # GET EMBEDDINGS
-        # train_inputs = self.get_embeddings(train_text)
-        # test_inputs = self.get_embeddings(test_text)
 
-        # ADD THEM BACK INTO train and test data
-        # train_data = self.change_dataset(train_inputs, train_data)
-        # test_data = self.change_dataset(test_inputs, test_data)
-        print(train_data)
+        train_data = CustomDataset(train_data)
+        test_data = CustomDataset(test_data)
 
         train_data = torch.utils.data.DataLoader(train_data, batch_size=16, shuffle=True)
         test_data = torch.utils.data.DataLoader(test_data, batch_size=16, shuffle=False)
-        # for batch in train_data:
-        #     texts = batch['text']
-        #     labels = batch['label']
+        for texts, labels in train_data:
+            print(texts.shape)
+            print(labels.shape)
 
         return {'train_data': train_data, 'test_data': test_data}
