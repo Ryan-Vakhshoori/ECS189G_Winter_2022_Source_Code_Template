@@ -18,7 +18,7 @@ if 1:
     #new_data = loaded_obj.load()
     # print(new_data)
     graph_obj = Graph()
-    method_obj = Method_RNN_TC('RNNModel', '', [], "", "adam", "")
+    method_obj = Method_RNN_TC('RNNModel', '', 200, 2, "adam", "")
 
     result_obj = Result_Saver('saver', '')
     result_obj.result_destination_folder_path = '../../result/stage_4_result/RNN_'

@@ -25,8 +25,8 @@ class Method_RNN_TC(method, nn.Module):
         self.hidden_size = hidden_size
         self.num_layers = num_layers
         self.optimizer = optimizer
-        self.rnn = nn.RNN(input_size=768, hidden_size=200, num_layers=2, batch_first=True)
-        self.fc = nn.Linear(200, 1)
+        self.rnn = nn.RNN(input_size=50, hidden_size=50, num_layers=1, batch_first=True)
+        self.fc = nn.Linear(50, 1)
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
@@ -56,7 +56,7 @@ class Method_RNN_TC(method, nn.Module):
                 # total_loss += loss.item()
                 res_loss += loss.item()
                 optimizer.zero_grad()
-                loss.backward(retain_graph=True)
+                loss.backward()
                 optimizer.step()
             resulting_loss.append(res_loss / len(X))
             epochs.append(epoch)
@@ -92,4 +92,3 @@ class Method_RNN_TC(method, nn.Module):
         print('--start testing...')
         predicted_labels, actual_labels = self.test(self.data['test_data'])
         return resulting_loss, epochs, predicted_labels, actual_labels
-
