@@ -15,7 +15,7 @@ import numpy as np
 
 class Method_RNN_TC(method, nn.Module):
     data = None
-    max_epoch = 5
+    max_epoch = 10
     learning_rate = 1e-3
 
     def __init__(self, mName, mDescription, hidden_size, num_layers, optimizer, activation_function):
@@ -25,8 +25,61 @@ class Method_RNN_TC(method, nn.Module):
         self.hidden_size = hidden_size
         self.num_layers = num_layers
         self.optimizer = optimizer
-        self.rnn = nn.RNN(input_size=50, hidden_size=50, num_layers=1, batch_first=True)
-        self.fc = nn.Linear(50, 1)
+        # epochs 20
+        # batch size 16
+        # self.rnn = nn.RNN(input_size=50, hidden_size=200, num_layers=2, batch_first=True)
+        # self.rnn = nn.GRU(input_size=50, hidden_size=200, num_layers=1, batch_first=True)
+        # self.rnn = nn.LSTM(input_size=50, hidden_size=50, num_layers=1, batch_first=True) 0.82548
+        # self.rnn = nn.LSTM(input_size=50, hidden_size=100, num_layers=1, batch_first=True) 0.81112
+        # self.rnn = nn.GRU(input_size=50, hidden_size=50, num_layers=1, batch_first=True) 0.82404
+        # batch size 64
+        # self.rnn = nn.GRU(input_size=50, hidden_size=50, num_layers=1, batch_first=True) 0.84144
+        # self.rnn = nn.LSTM(input_size=50, hidden_size=50, num_layers=1, batch_first=True) 0.81344
+        # self.rnn = nn.GRU(input_size=50, hidden_size=100, num_layers=1, batch_first=True) 0.8316
+        # epochs 25
+        # self.rnn = nn.GRU(input_size=50, hidden_size=50, num_layers=1, batch_first=True) 0.83324
+        # self.rnn = nn.LSTM(input_size=50, hidden_size=50, num_layers=1, batch_first=True) 0.83076
+        # epochs 15
+        # self.rnn = nn.GRU(input_size=50, hidden_size=50, num_layers=1, batch_first=True) 0.84468
+        # self.rnn = nn.GRU(input_size=50, hidden_size=50, num_layers=2, batch_first=True) 0.8496
+        # max_len 120 only next one
+        # self.rnn = nn.GRU(input_size=50, hidden_size=50, num_layers=2, batch_first=True) 0.83212
+        # max_len 122 only next one
+        # self.rnn = nn.GRU(input_size=50, hidden_size=50, num_layers=2, batch_first=True) 0.84204
+        # max_len 130 only next one
+        # self.rnn = nn.GRU(input_size=50, hidden_size=50, num_layers=2, batch_first=True) 0.84964
+        # self.rnn = nn.GRU(input_size=50, hidden_size=50, num_layers=2, batch_first=True, dropout=0.1) 0.84588
+        # self.rnn = nn.GRU(input_size=50, hidden_size=50, num_layers=2, batch_first=True, dropout=0.2) 0.84932
+        # self.rnn = nn.GRU(input_size=50, hidden_size=50, num_layers=2, batch_first=True, dropout=0.3) 0.83712
+        # 10 epochs
+        # self.rnn = nn.GRU(input_size=50, hidden_size=50, num_layers=2, batch_first=True)  0.8438
+        # 14 epochs
+        # self.rnn = nn.GRU(input_size=50, hidden_size=50, num_layers=2, batch_first=True) 0.84908
+        # 16 epochs
+        # self.rnn = nn.GRU(input_size=50, hidden_size=50, num_layers=2, batch_first=True) 0.84864
+        # max_len 135 only next one
+        # self.rnn = nn.GRU(input_size=50, hidden_size=50, num_layers=2, batch_first=True) 0.84836
+        # self.rnn = nn.GRU(input_size=50, hidden_size=50, num_layers=2, batch_first=True) 0.84744
+        # self.rnn = nn.GRU(input_size=50, hidden_size=45, num_layers=2, batch_first=True) 0.84372
+        # self.rnn = nn.LSTM(input_size=50, hidden_size=50, num_layers=1, batch_first=True) 0.62548
+        # self.rnn = nn.GRU(input_size=50, hidden_size=55, num_layers=2, batch_first=True) 0.84524
+        # epochs 16
+        # self.rnn = nn.GRU(input_size=50, hidden_size=50, num_layers=2, batch_first=True) 0.83744
+        # epochs 10
+        # self.rnn = nn.GRU(input_size=50, hidden_size=50, num_layers=1, batch_first=True) 0.82392
+        # epochs 12
+        # self.rnn = nn.GRU(input_size=50, hidden_size=50, num_layers=1, batch_first=True) 0.8438
+        # epochs 14
+        # self.rnn = nn.GRU(input_size=50, hidden_size=50, num_layers=2, batch_first=True) 0.83696
+        # self.rnn = nn.GRU(input_size=50, hidden_size=55, num_layers=2, batch_first=True) 0.84104
+        # 15 epochs
+        # self.rnn = nn.GRU(input_size=50, hidden_size=100, num_layers=2, batch_first=True) 0.834
+        # self.rnn = nn.GRU(input_size=50, hidden_size=100, num_layers=2, batch_first=True) 0.8242
+        # self.rnn = nn.GRU(input_size=50, hidden_size=200, num_layers=2, batch_first=True, dropout=0.2) 0.83852
+        # self.rnn = nn.LSTM(input_size=50, hidden_size=256, num_layers=2, batch_first=True, dropout=0.3)
+        # self.rnn = nn.GRU(input_size=50, hidden_size=256, num_layers=2, batch_first=True, dropout=0.2) 0.83072
+        self.rnn = nn.GRU(input_size=100, hidden_size=self.hidden_size, num_layers=self.num_layers, batch_first=True)
+        self.fc = nn.Linear(self.hidden_size, 1)
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
@@ -45,16 +98,12 @@ class Method_RNN_TC(method, nn.Module):
         resulting_loss = []
         epochs = []
         for epoch in range(self.max_epoch):
-            total_loss = 0.0
             res_loss = 0.0
             for i, data in enumerate(X, 0):
                 inputs = data['embedding']
-                print(type(inputs))
                 labels = data['label']
-                # print(f"Print the shape of the input batch: {inputs.shape}")
                 output = self.forward(inputs)
                 loss = loss_function(output.squeeze(), labels.float())
-                # total_loss += loss.item()
                 res_loss += loss.item()
                 optimizer.zero_grad()
                 loss.backward()
@@ -86,7 +135,7 @@ class Method_RNN_TC(method, nn.Module):
         return predicted_labels, actual_labels
 
     def run(self):
-        accuracy_evaluator = Evaluate_Accuracy('training evaluator', '')
+        # accuracy_evaluator = Evaluate_Accuracy('training evaluator', '')
         print('method running...')
         print('--start training...')
         resulting_loss, epochs = self.train(self.data['train_data'])
