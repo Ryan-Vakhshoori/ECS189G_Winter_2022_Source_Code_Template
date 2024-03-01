@@ -2,13 +2,15 @@ from code.base_class.method import method
 from code.stage_1_code.Evaluate_Accuracy import Evaluate_Accuracy
 import torch
 from torch import nn
+import torch.nn.init as init
+
 import numpy as np
 
 # TODO: THIS FILE IS JUST COPIED FORM METHOD_RNN_TC
 
 class Method_RNN_TG(method, nn.Module):
     data = None
-    max_epoch = 3
+    max_epoch = 9
     learning_rate = 1e-3
 
     def __init__(self, mName, mDescription, hidden_size, num_layers, optimizer, activation_function, word_to_one_hot, one_hot_to_word):
@@ -18,10 +20,16 @@ class Method_RNN_TG(method, nn.Module):
         self.hidden_size = hidden_size
         self.num_layers = num_layers
         self.optimizer = optimizer
-        self.rnn = nn.RNN(input_size=6478, hidden_size=1000, num_layers=2, batch_first=True)
-        self.fc = nn.Linear(1000, 6478)
+        self.rnn = nn.GRU(input_size=6478, hidden_size=200, num_layers=2, batch_first=True) # try 100 with more epochs
+        self.fc = nn.Linear(200, 6478)
+        self.fc1 = nn.Linear(500, 200)
+        self.fc2 = nn.Linear(200, 6478)
         self.word_to_one_hot = word_to_one_hot
         self.one_hot_to_word = one_hot_to_word
+
+        # for name, param in self.rnn.named_parameters():
+        #     if 'weight' in name:
+        #         init.orthogonal_(param)
 
     def forward(self, x):
         output, _ = self.rnn(x)
@@ -63,6 +71,8 @@ class Method_RNN_TG(method, nn.Module):
             print(f'[{epoch + 1}], loss: {res_loss / len(X):.3f}')
 
 
+
+
             # for i, data in enumerate(X, 0):
             #     inputs = data['text']
             #     labels = data['label']
@@ -77,45 +87,71 @@ class Method_RNN_TG(method, nn.Module):
             # resulting_loss.append(res_loss / len(X))
             # epochs.append(epoch)
             # print(f'[{epoch + 1}], loss: {res_loss / len(X):.3f}')
-
         return resulting_loss, epochs
 
-    def predict(self, input_string):
-        # self.eval()
 
+    def predict(self,input_string):
         input_string = input_string.lower().split()  # Splitting without removing punctuation
         input_string = [self.word_to_one_hot[token] for token in input_string]
 
-        print(input_string)
-       # print(input_string.shape())
-
         input = torch.stack(input_string).unsqueeze(0)
-        print(input.size())
+
+        loop = 10
+
+        for i in range(loop):
+            pred = self.predict_next_word(input)
+            input_string.append(pred)
+            input = torch.stack(input_string).unsqueeze(0)
+
+
+        output = []
+        for token in input_string:
+            output.append(self.one_hot_to_word[tuple(token.numpy().tolist())])
+        # print(self.one_hot_to_word[tuple(one_hot.numpy().tolist())])
+        print(" ".join(output))
+        return output
+        # with torch.no_grad():
+        #     output = self.forward(input)
 
 
 
-        # convert input to input data
+    def predict_next_word(self, input):
+        # self.eval()
+       #
+       #  input_string = input_string.lower().split()  # Splitting without removing punctuation
+       #  input_string = [self.word_to_one_hot[token] for token in input_string]
+       #
+       #  print(input_string)
+       # # print(input_string.shape())
+       #
+       #  input = torch.stack(input_string).unsqueeze(0)
+       #  print(input.size())
+       #
+       #
+       #
+       #  # convert input to input data
 
 
         with torch.no_grad():
             output = self.forward(input)
 
-        print("output word:")
-        print(output)
+        # print("output word:")
+        # print(output)
 
         softmaxed_tensor = torch.nn.functional.softmax(output, dim=1)
 
-        print(softmaxed_tensor)
+        # print(softmaxed_tensor)
 
         # Perform one-hot encoding
         _, one_hot_encoded = torch.max(softmaxed_tensor, 1)
 
-        print(one_hot_encoded)
+        # print(one_hot_encoded)
 
         one_hot = torch.zeros(6478)
         one_hot[one_hot_encoded[0]] = 1
 
-        print(self.one_hot_to_word[tuple(one_hot.numpy().tolist())])
+        # print(self.one_hot_to_word[tuple(one_hot.numpy().tolist())])
+        return one_hot
 
     # def test(self, test_data):
     #     total = 0
@@ -143,7 +179,8 @@ class Method_RNN_TG(method, nn.Module):
         resulting_loss, epochs = self.train(self.data)
         print('--end training...')
 
-        self.predict("how are you")
+        self.predict("What did the")
+        self.predict("I am going")
 
         # print('--start testing...')
         # predicted_labels, actual_labels = self.test(self.data['test_data'])
