@@ -10,8 +10,8 @@ import numpy as np
 
 class Method_RNN_TG(method, nn.Module):
     data = None
-    max_epoch = 9
-    learning_rate = 1e-3
+    max_epoch = 5
+    learning_rate = 0.001
 
     def __init__(self, mName, mDescription, hidden_size, num_layers, optimizer, activation_function, word_to_one_hot, one_hot_to_word):
         method.__init__(self, mName, mDescription, hidden_size, optimizer, activation_function)
@@ -22,8 +22,6 @@ class Method_RNN_TG(method, nn.Module):
         self.optimizer = optimizer
         self.rnn = nn.GRU(input_size=6478, hidden_size=200, num_layers=2, batch_first=True) # try 100 with more epochs
         self.fc = nn.Linear(200, 6478)
-        self.fc1 = nn.Linear(500, 200)
-        self.fc2 = nn.Linear(200, 6478)
         self.word_to_one_hot = word_to_one_hot
         self.one_hot_to_word = one_hot_to_word
 
@@ -41,7 +39,7 @@ class Method_RNN_TG(method, nn.Module):
         if self.optimizer == "adam":
             optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
         else:
-            optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate, momentum=0.9)
+            optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate, momentum=0.90)
         loss_function = nn.CrossEntropyLoss()
         resulting_loss = []
         epochs = []
