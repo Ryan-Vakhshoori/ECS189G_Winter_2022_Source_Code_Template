@@ -3,5 +3,6 @@
 # ignore .DS_Store
 /data/stage_3_data/
 /data/stage_4_data
+/script/stage_4_script/.vector_cache
 .DS_Store
 *.pyc
