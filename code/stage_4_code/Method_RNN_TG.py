@@ -84,7 +84,7 @@ class Method_RNN_TG(method, nn.Module):
             #     optimizer.step()
             # resulting_loss.append(res_loss / len(X))
             # epochs.append(epoch)
-            # print(f'[{epoch + 1}], loss: {res_loss / len(X):.3f}')
+            # print(f'[{epoch + 1}], loss: {res_loss / len(X):.3f}')s
         return resulting_loss, epochs
 
 
@@ -114,41 +114,20 @@ class Method_RNN_TG(method, nn.Module):
 
 
     def predict_next_word(self, input):
-        # self.eval()
-       #
-       #  input_string = input_string.lower().split()  # Splitting without removing punctuation
-       #  input_string = [self.word_to_one_hot[token] for token in input_string]
-       #
-       #  print(input_string)
-       # # print(input_string.shape())
-       #
-       #  input = torch.stack(input_string).unsqueeze(0)
-       #  print(input.size())
-       #
-       #
-       #
-       #  # convert input to input data
-
-
         with torch.no_grad():
             output = self.forward(input)
 
-        # print("output word:")
-        # print(output)
-
         softmaxed_tensor = torch.nn.functional.softmax(output, dim=1)
 
-        # print(softmaxed_tensor)
+        temperature = 0.8
 
-        # Perform one-hot encoding
-        _, one_hot_encoded = torch.max(softmaxed_tensor, 1)
+        softmaxed_tensor = softmaxed_tensor / temperature
 
-        # print(one_hot_encoded)
+        selected_index = torch.multinomial(softmaxed_tensor, 1).item()
 
         one_hot = torch.zeros(6478)
-        one_hot[one_hot_encoded[0]] = 1
+        one_hot[selected_index] = 1
 
-        # print(self.one_hot_to_word[tuple(one_hot.numpy().tolist())])
         return one_hot
 
     # def test(self, test_data):

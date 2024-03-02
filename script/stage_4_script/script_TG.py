@@ -7,17 +7,16 @@ from code.stage_4_code.Graphing import Graph
 import numpy as np
 
 if 1:
-    #---- parameter section -------------------------------
+    # ---- parameter section -------------------------------
     None
     np.random.seed(1)
-    #------------------------------------------------------
+    # ------------------------------------------------------
 
-    #---- objection initialization section ---------------
+    # ---- object initialization section -------------------
     loaded_obj = Dataset_Loader('reviews', '')
     loaded_obj.dataset_source_folder_path = '../../data/stage_4_data/text_generation'
     loaded_obj.dataset_source_file_name = '/data'
     new_data = loaded_obj.load()
-
 
     graph_obj = Graph()
     method_obj = Method_RNN_TG('RNNModel', '', [], "", "", "", new_data["word_to_one_hot"], new_data["one_hot_to_word"])
@@ -33,11 +32,6 @@ if 1:
     print('************ Start (Model 1) ************')
     setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
     setting_obj.print_setup_summary()
-    setting_obj.load_test_data()
-    # print('************ Overall Performance ************')
-    # print('RNN Text Classification Accuracy: ' + str(accuracy))
-    # print('RNN Text Classification Precision: ' + str(precision))
-    # print('RNN Text Classification F1 Score: ' + str(f1_score))
-    # print('RNN Text Classification Recall: ' + str(recall))
-    # print('************ Finish ************')
-    # graph_obj.traininglossgraph(epoch, train_loss)
+    train_loss, epoch = setting_obj.load_test_data()
+    print('************ Finish ************')
+    graph_obj.traininglossgraph(epoch, train_loss)

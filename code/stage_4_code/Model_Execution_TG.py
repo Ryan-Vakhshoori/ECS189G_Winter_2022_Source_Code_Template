@@ -13,8 +13,9 @@ class ModelExecution(setting):
     def load_test_data(self):
         loaded_data = self.dataset.load()
         self.method.data = loaded_data["train_data"]
-        output = self.method.run()
-        result_data = {'output': output}
+        resulting_loss, epoch = self.method.run()
+        result_data = {'pred_y': resulting_loss, 'true_y': epoch}
+        self.evaluate.data = result_data
         self.result.data = result_data
         self.result.save()
-        return
+        return resulting_loss, epoch
