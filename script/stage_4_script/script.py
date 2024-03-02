@@ -85,7 +85,7 @@ if 1:
     method_obj = Method_RNN_TC('GRU', '', 200, 2, "adam", "")
     result_obj.result_destination_file_name = 'prediction_result_5'
 
-    print('************ Start (LSTM Model 2) ************')
+    print('************ Start (GRU Model 2) ************')
     setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
     setting_obj.print_setup_summary()
     [accuracy, precision, f1_score, recall], train_loss, epoch = setting_obj.load_test_data()
