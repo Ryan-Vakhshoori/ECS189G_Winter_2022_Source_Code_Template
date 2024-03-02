@@ -10,8 +10,8 @@ import numpy as np
 
 class Method_RNN_TG(method, nn.Module):
     data = None
-    max_epoch = 5
-    learning_rate = 0.001
+    max_epoch = 10
+    learning_rate = 1e-3
 
     def __init__(self, mName, mDescription, hidden_size, num_layers, optimizer, activation_function, word_to_one_hot, one_hot_to_word):
         method.__init__(self, mName, mDescription, hidden_size, optimizer, activation_function)
@@ -20,8 +20,10 @@ class Method_RNN_TG(method, nn.Module):
         self.hidden_size = hidden_size
         self.num_layers = num_layers
         self.optimizer = optimizer
-        self.rnn = nn.GRU(input_size=6478, hidden_size=200, num_layers=2, batch_first=True) # try 100 with more epochs
-        self.fc = nn.Linear(200, 6478)
+        self.rnn = nn.GRU(input_size=6478, hidden_size=self.hidden_size, num_layers=2, batch_first=True) # try 100 with more epochs
+        self.fc = nn.Linear(self.hidden_size, 6478)
+        self.fc1 = nn.Linear(500, 200)
+        self.fc2 = nn.Linear(200, 6478)
         self.word_to_one_hot = word_to_one_hot
         self.one_hot_to_word = one_hot_to_word
 
@@ -39,7 +41,7 @@ class Method_RNN_TG(method, nn.Module):
         if self.optimizer == "adam":
             optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
         else:
-            optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate, momentum=0.90)
+            optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate, momentum=0.9)
         loss_function = nn.CrossEntropyLoss()
         resulting_loss = []
         epochs = []
@@ -84,7 +86,7 @@ class Method_RNN_TG(method, nn.Module):
             #     optimizer.step()
             # resulting_loss.append(res_loss / len(X))
             # epochs.append(epoch)
-            # print(f'[{epoch + 1}], loss: {res_loss / len(X):.3f}')s
+            # print(f'[{epoch + 1}], loss: {res_loss / len(X):.3f}')
         return resulting_loss, epochs
 
 
@@ -114,20 +116,41 @@ class Method_RNN_TG(method, nn.Module):
 
 
     def predict_next_word(self, input):
+        # self.eval()
+       #
+       #  input_string = input_string.lower().split()  # Splitting without removing punctuation
+       #  input_string = [self.word_to_one_hot[token] for token in input_string]
+       #
+       #  print(input_string)
+       # # print(input_string.shape())
+       #
+       #  input = torch.stack(input_string).unsqueeze(0)
+       #  print(input.size())
+       #
+       #
+       #
+       #  # convert input to input data
+
+
         with torch.no_grad():
             output = self.forward(input)
 
+        # print("output word:")
+        # print(output)
+
         softmaxed_tensor = torch.nn.functional.softmax(output, dim=1)
 
-        temperature = 0.8
+        # print(softmaxed_tensor)
 
-        softmaxed_tensor = softmaxed_tensor / temperature
+        # Perform one-hot encoding
+        _, one_hot_encoded = torch.max(softmaxed_tensor, 1)
 
-        selected_index = torch.multinomial(softmaxed_tensor, 1).item()
+        # print(one_hot_encoded)
 
         one_hot = torch.zeros(6478)
-        one_hot[selected_index] = 1
+        one_hot[one_hot_encoded[0]] = 1
 
+        # print(self.one_hot_to_word[tuple(one_hot.numpy().tolist())])
         return one_hot
 
     # def test(self, test_data):

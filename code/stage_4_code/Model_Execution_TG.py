@@ -14,7 +14,7 @@ class ModelExecution(setting):
         loaded_data = self.dataset.load()
         self.method.data = loaded_data["train_data"]
         resulting_loss, epoch = self.method.run()
-        result_data = {'pred_y': resulting_loss, 'true_y': epoch}
+        result_data = {'resulting_loss': resulting_loss, 'epochs': epoch}
         self.evaluate.data = result_data
         self.result.data = result_data
         self.result.save()

@@ -7,19 +7,20 @@ from code.stage_4_code.Graphing import Graph
 import numpy as np
 
 if 1:
-    # ---- parameter section -------------------------------
+    #---- parameter section -------------------------------
     None
     np.random.seed(1)
-    # ------------------------------------------------------
+    #------------------------------------------------------
 
-    # ---- object initialization section -------------------
+    #---- objection initialization section ---------------
     loaded_obj = Dataset_Loader('reviews', '')
     loaded_obj.dataset_source_folder_path = '../../data/stage_4_data/text_generation'
     loaded_obj.dataset_source_file_name = '/data'
     new_data = loaded_obj.load()
 
+
     graph_obj = Graph()
-    method_obj = Method_RNN_TG('RNNModel', '', [], "", "", "", new_data["word_to_one_hot"], new_data["one_hot_to_word"])
+    method_obj = Method_RNN_TG('RNNModel', '', 200, "", "", "", new_data["word_to_one_hot"], new_data["one_hot_to_word"])
 
     result_obj = Result_Saver('saver', '')
     result_obj.result_destination_folder_path = '../../result/stage_4_result/RNN_'
@@ -29,7 +30,25 @@ if 1:
 
     result_obj.result_destination_file_name = 'prediction_result_1'
 
-    print('************ Start (Model 1) ************')
+    # print('************ Start (Model 1) ************')
+    # setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
+    # setting_obj.print_setup_summary()
+    # train_loss, epoch = setting_obj.load_test_data()
+    # print('************ Finish ************')
+    # graph_obj.traininglossgraph(epoch, train_loss)
+    #
+    # print('************ Start (Model 2) ************')
+    # method_obj = Method_RNN_TG('RNNModel', '', 200, "", "adam", "", new_data["word_to_one_hot"],
+    #                            new_data["one_hot_to_word"])
+    # setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
+    # setting_obj.print_setup_summary()
+    # train_loss, epoch = setting_obj.load_test_data()
+    # print('************ Finish ************')
+    # graph_obj.traininglossgraph(epoch, train_loss)
+
+    print('************ Start (Model 3) ************')
+    method_obj = Method_RNN_TG('RNNModel', '', 400, "", "", "", new_data["word_to_one_hot"],
+                               new_data["one_hot_to_word"])
     setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
     setting_obj.print_setup_summary()
     train_loss, epoch = setting_obj.load_test_data()
