@@ -20,7 +20,7 @@ if 1:
 
 
     graph_obj = Graph()
-    method_obj = Method_RNN_TG('RNNModel', '', [], "", "", "", new_data["word_to_one_hot"], new_data["one_hot_to_word"])
+    method_obj = Method_RNN_TG('RNNModel', '', 200, "", "", "", new_data["word_to_one_hot"], new_data["one_hot_to_word"])
 
     result_obj = Result_Saver('saver', '')
     result_obj.result_destination_folder_path = '../../result/stage_4_result/RNN_'
