@@ -30,27 +30,14 @@ if 1:
 
     result_obj.result_destination_file_name = 'prediction_result_1'
 
-    # print('************ Start (Model 1) ************')
-    # setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
-    # setting_obj.print_setup_summary()
-    # train_loss, epoch = setting_obj.load_test_data()
-    # print('************ Finish ************')
-    # graph_obj.traininglossgraph(epoch, train_loss)
-    #
-    # print('************ Start (Model 2) ************')
-    # method_obj = Method_RNN_TG('RNNModel', '', 200, "", "adam", "", new_data["word_to_one_hot"],
-    #                            new_data["one_hot_to_word"])
-    # setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
-    # setting_obj.print_setup_summary()
-    # train_loss, epoch = setting_obj.load_test_data()
-    # print('************ Finish ************')
-    # graph_obj.traininglossgraph(epoch, train_loss)
-
-    print('************ Start (Model 3) ************')
-    method_obj = Method_RNN_TG('RNNModel', '', 400, "", "", "", new_data["word_to_one_hot"],
-                               new_data["one_hot_to_word"])
+    print('************ Start (Model 1) ************')
     setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
     setting_obj.print_setup_summary()
     train_loss, epoch = setting_obj.load_test_data()
-    print('************ Finish ************')
+    # print('************ Overall Performance ************')
+    # print('RNN Text Classification Accuracy: ' + str(accuracy))
+    # print('RNN Text Classification Precision: ' + str(precision))
+    # print('RNN Text Classification F1 Score: ' + str(f1_score))
+    # print('RNN Text Classification Recall: ' + str(recall))
+    # print('************ Finish ************')
     graph_obj.traininglossgraph(epoch, train_loss)

@@ -20,10 +20,8 @@ class Method_RNN_TG(method, nn.Module):
         self.hidden_size = hidden_size
         self.num_layers = num_layers
         self.optimizer = optimizer
-        self.rnn = nn.GRU(input_size=6478, hidden_size=self.hidden_size, num_layers=2, batch_first=True) # try 100 with more epochs
+        self.rnn = nn.LSTM(input_size=6478, hidden_size=self.hidden_size, num_layers=2, batch_first=True) # try 100 with more epochs
         self.fc = nn.Linear(self.hidden_size, 6478)
-        self.fc1 = nn.Linear(500, 200)
-        self.fc2 = nn.Linear(200, 6478)
         self.word_to_one_hot = word_to_one_hot
         self.one_hot_to_word = one_hot_to_word
 
