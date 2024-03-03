@@ -15,7 +15,7 @@ import numpy as np
 
 class Method_RNN_TC(method, nn.Module):
     data = None
-    max_epoch = 5
+    max_epoch = 10
     learning_rate = 1e-3
 
     def __init__(self, mName, mDescription, hidden_size, num_layers, optimizer, activation_function):
@@ -25,8 +25,20 @@ class Method_RNN_TC(method, nn.Module):
         self.hidden_size = hidden_size
         self.num_layers = num_layers
         self.optimizer = optimizer
-        self.rnn = nn.RNN(input_size=768, hidden_size=200, num_layers=2, batch_first=True)
-        self.fc = nn.Linear(200, 1)
+        if mName == "RNN":
+            print("RNN Method")
+            self.rnn = nn.RNN(input_size=100, hidden_size=self.hidden_size, num_layers=self.num_layers, batch_first=True)
+
+        elif mName == "LSTM":
+            print("LSTM Method")
+            self.rnn = nn.LSTM(input_size=100, hidden_size=self.hidden_size, num_layers=self.num_layers,
+                              batch_first=True)
+
+        elif mName == "GRU":
+            print("GRU Method")
+            self.rnn = nn.GRU(input_size=100, hidden_size=self.hidden_size, num_layers=self.num_layers,
+                              batch_first=True)
+        self.fc = nn.Linear(self.hidden_size, 1)
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
@@ -45,18 +57,15 @@ class Method_RNN_TC(method, nn.Module):
         resulting_loss = []
         epochs = []
         for epoch in range(self.max_epoch):
-            total_loss = 0.0
             res_loss = 0.0
             for i, data in enumerate(X, 0):
-                inputs = data['text']
+                inputs = data['embedding']
                 labels = data['label']
-                # print(f"Print the shape of the input batch: {inputs.shape}")
                 output = self.forward(inputs)
                 loss = loss_function(output.squeeze(), labels.float())
-                # total_loss += loss.item()
                 res_loss += loss.item()
                 optimizer.zero_grad()
-                loss.backward(retain_graph=True)
+                loss.backward()
                 optimizer.step()
             resulting_loss.append(res_loss / len(X))
             epochs.append(epoch)
@@ -71,7 +80,7 @@ class Method_RNN_TC(method, nn.Module):
         actual_labels = np.array([])
         with torch.no_grad():
             for data in test_data:
-                inputs = data['text']
+                inputs = data['embedding']
                 labels = data['label']
                 outputs = self.forward(inputs)
                 predicted = torch.tensor([1 if i == True else 0 for i in outputs > 0.5])
@@ -85,11 +94,10 @@ class Method_RNN_TC(method, nn.Module):
         return predicted_labels, actual_labels
 
     def run(self):
-        accuracy_evaluator = Evaluate_Accuracy('training evaluator', '')
+        # accuracy_evaluator = Evaluate_Accuracy('training evaluator', '')
         print('method running...')
         print('--start training...')
         resulting_loss, epochs = self.train(self.data['train_data'])
         print('--start testing...')
         predicted_labels, actual_labels = self.test(self.data['test_data'])
         return resulting_loss, epochs, predicted_labels, actual_labels
-
