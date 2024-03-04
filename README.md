@@ -21,9 +21,10 @@ nltk.download('punkt')
 import nltk
 nltk.download('stopwords')
 ```
-In the stage_4_script side make a directory called .vector_cache and all the glove 100d file into it
+In the stage_4_script side make a directory called .vector_cache and add the glove 100d file into it
 
 then go to stage_4_script and run: script.py
 
 ### For Text Generation
+install pandas library
 run script: script_TG.py
