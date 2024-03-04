@@ -14,6 +14,7 @@ navigate to script/stage_3_script
 ## To run for Part 4:
 Add all the datasets into the data/stage_4_data
 ### For Text Classification
+add nltk package and follow the below commands on the python console
 for stage 4 downloading using nltk
 ```
 import nltk
