@@ -30,37 +30,37 @@ if 1:
 
     result_obj.result_destination_file_name = 'prediction_result_1'
 
-    print('************ Start (LSTM Model 1) ************')
-    setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
-    setting_obj.print_setup_summary()
-    train_loss, epoch = setting_obj.load_test_data()
-    graph_obj.traininglossgraph(epoch, train_loss)
+    # print('************ Start (LSTM Model 1) ************')
+    # setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
+    # setting_obj.print_setup_summary()
+    # train_loss, epoch = setting_obj.load_test_data()
+    # graph_obj.traininglossgraph(epoch, train_loss)
 
-    print('************ Start (GRU Model 1) ************')
-    method_obj = Method_RNN_TG('GRU', '', 200, "", "", "", new_data["word_to_one_hot"], new_data["one_hot_to_word"])
-    setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
-    setting_obj.print_setup_summary()
-    train_loss, epoch = setting_obj.load_test_data()
-    graph_obj.traininglossgraph(epoch, train_loss)
-
-    print('************ Start (RNN Model 1) ************')
-    method_obj = Method_RNN_TG('RNN', '', 200, "", "", "", new_data["word_to_one_hot"], new_data["one_hot_to_word"])
-    setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
-    setting_obj.print_setup_summary()
-    train_loss, epoch = setting_obj.load_test_data()
-    graph_obj.traininglossgraph(epoch, train_loss)
+    # print('************ Start (GRU Model 1) ************')
+    # method_obj = Method_RNN_TG('GRU', '', 200, "", "", "", new_data["word_to_one_hot"], new_data["one_hot_to_word"])
+    # setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
+    # setting_obj.print_setup_summary()
+    # train_loss, epoch = setting_obj.load_test_data()
+    # graph_obj.traininglossgraph(epoch, train_loss)
+    #
+    # print('************ Start (RNN Model 1) ************')
+    # method_obj = Method_RNN_TG('RNN', '', 200, "", "", "", new_data["word_to_one_hot"], new_data["one_hot_to_word"])
+    # setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
+    # setting_obj.print_setup_summary()
+    # train_loss, epoch = setting_obj.load_test_data()
+    # graph_obj.traininglossgraph(epoch, train_loss)
 
 
     # Ablation Studies
     print('************ Start (GRU Model 2) ************')
-    method_obj = Method_RNN_TG('GRU', '', 400, "", "", "", new_data["word_to_one_hot"], new_data["one_hot_to_word"])
+    method_obj = Method_RNN_TG('GRU', '', 200, "", "adam", "", new_data["word_to_one_hot"], new_data["one_hot_to_word"])
     setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
     setting_obj.print_setup_summary()
     train_loss, epoch = setting_obj.load_test_data()
     graph_obj.traininglossgraph(epoch, train_loss)
 
     print('************ Start (LSTM Model 2) ************')
-    method_obj = Method_RNN_TG('LSTM', '', 400, "", "", "", new_data["word_to_one_hot"], new_data["one_hot_to_word"])
+    method_obj = Method_RNN_TG('LSTM', '', 200, "", "adam", "", new_data["word_to_one_hot"], new_data["one_hot_to_word"])
     setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
     setting_obj.print_setup_summary()
     train_loss, epoch = setting_obj.load_test_data()

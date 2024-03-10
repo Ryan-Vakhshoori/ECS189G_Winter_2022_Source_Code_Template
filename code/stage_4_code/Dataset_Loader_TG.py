@@ -6,8 +6,6 @@ from torch.utils.data import Dataset
 
 from code.base_class.dataset import dataset
 import pandas as pd
-from torch.nn.utils.rnn import pad_sequence
-
 
 class CustomDataset(Dataset):
     def __init__(self, data):
@@ -79,6 +77,7 @@ class Dataset_Loader(dataset):
 
         train_data= create_training_data()
 
+
         # final_train_data = []
         # for example in train_data:
         #
@@ -97,18 +96,10 @@ class Dataset_Loader(dataset):
         #     # break;
         #
 
-        def collate_fn(batch):
-            inputs = [item['input'] for item in batch]
-            targets = [item['target'] for item in batch]
 
-            # Pad sequences to the maximum length in the batch
-            padded_inputs = pad_sequence(inputs, batch_first=True, padding_value=0)
-            padded_targets = torch.stack(targets)
-
-            return {'input': padded_inputs, 'target': padded_targets}
         # train_data = CustomDataset(train_data)
 
-        train_data = torch.utils.data.DataLoader(train_data,batch_size=64,collate_fn=collate_fn,shuffle=True)
+        train_data = torch.utils.data.DataLoader(train_data, batch_size=1, shuffle=False)
 
         # for batch in train_data:
         #     print(batch['input'].size(), batch['target'].size())

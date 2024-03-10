@@ -195,4 +195,3 @@ class Method_RNN_TG(method, nn.Module):
         # predicted_labels, actual_labels = self.test(self.data['test_data'])
         # return resulting_loss, epochs, predicted_labels, actual_labels
         return resulting_loss, epochs
-
