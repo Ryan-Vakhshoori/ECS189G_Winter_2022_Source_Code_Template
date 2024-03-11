@@ -15,10 +15,10 @@ from code.stage_5_code.Layers import GraphConvolution
 
 class Method_GNN_Pubmed(method, nn.Module):
     data = None
-    max_epoch = 100
-    learning_rate = 5e-4
-    hidden_units = 512
-    num_layers = 3
+    max_epoch = 25
+    learning_rate = 1e-3
+    hidden_units = 64
+    num_layers = 4
 
     def __init__(self, mName, mDescription, hidden_size, num_layers, optimizer, activation_function):
         method.__init__(self, mName, mDescription, hidden_size, optimizer, activation_function)
@@ -42,7 +42,7 @@ class Method_GNN_Pubmed(method, nn.Module):
         # self.gc1 = GraphConvolution(3703, 300)
         # self.gc2 = GraphConvolution(300, 6)
 
-        self.dropout = 0.5
+        self.dropout = 0.2
 
     def forward(self, x, adj):
         x = F.relu(self.gc1(x, adj))
