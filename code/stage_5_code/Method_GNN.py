@@ -6,19 +6,28 @@ Concrete MethodModule class for a specific learning MethodModule
 # License: TBD
 
 from code.base_class.method import method
-from code.stage_1_code.Evaluate_Accuracy import Evaluate_Accuracy
+from code.stage_5_code.Evaluation_Metrics import Evaluation_Metrics
 import torch
 from torch import nn
+import numpy as np
 import torch.nn.functional as F
-from layers import GraphConvolution
+from code.stage_5_code.Layers import GraphConvolution
 
-class GCNLayer(nn.Module):
-    def __init__(self, mName, mDescription, hidden_size, num_layers, optimizer, activation_functione):
-        super(GCNLayer, self).__init__()
+class Method_GNN(method, nn.Module):
+    data = None
+    max_epoch = 20
+    learning_rate = 1e-3
 
-        self.gc1 = GraphConvolution(input_dim, hidden)
-        self.gc2 = GraphConvolution(mName, mDescription, hidden_size, num_layers, optimizer, activation_function)
-        self.dropout = dropout
+    def __init__(self, mName, mDescription, hidden_size, num_layers, optimizer, activation_function):
+        method.__init__(self, mName, mDescription, hidden_size, optimizer, activation_function)
+        nn.Module.__init__(self)
+        self.optimizer = optimizer
+        self.activation_function = activation_function
+        self.hidden_layers = num_layers
+        self.hidden_size = hidden_size
+        self.gc1 = GraphConvolution(1433, 300)
+        self.gc2 = GraphConvolution(300, 7)
+        self.dropout = 0.5
 
     def forward(self, x, adj):
         x = F.relu(self.gc1(x, adj))
@@ -26,44 +35,48 @@ class GCNLayer(nn.Module):
         x = self.gc2(x, adj)
         return F.log_softmax(x, dim=1)
 
+    def train(self, features, labels, adj, idx_train, idx_val):
+        if self.optimizer == "adam":
+            optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
+        else:
+            optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate, momentum=0.9)
+        print(self.optimizer)
+        resulting_loss = []
+        epochs = []
+        for epoch in range(self.max_epoch):
+            output = self.forward(features, adj)
+            loss_train = F.nll_loss(output[idx_train], labels[idx_train])
+            optimizer.zero_grad()
+            loss_train.backward()
+            optimizer.step()
+            loss_val = F.nll_loss(output[idx_val], labels[idx_val])
+            epochs.append(epoch)
+            resulting_loss.append(loss_train.item())
+            print('Epoch: {:04d}'.format(epoch + 1),
+                  'loss_train: {:.4f}'.format(loss_train.item()),
+                  'loss_val: {:.4f}'.format(loss_val.item()))
+        return resulting_loss, epochs
 
-class Method_GNN(method, nn.Module):
-    data = None
-    max_epoch = 20
-    learning_rate = 1e-3
-
-    def __init__(self, input_size, hidden_size, output_size):
-        method.__init__(self, input_size, hidden_size, output_size)
-        nn.Module.__init__(self)
-
-        self.gcn1 = GCNLayer()
-        self.gcn2 = GCNLayer(hidden_dim, output_dim, activation_function)
-
-    def test(self, test_data):
-        total = 0
-        correct = 0
-        predicted_labels = np.array([])
-        actual_labels = np.array([])
-        with torch.no_grad():
-            for data in test_data:
-                inputs = data['embedding']
-                labels = data['label']
-                outputs = self.forward(inputs)
-                predicted = torch.tensor([1 if i == True else 0 for i in outputs > 0.5])
-                predicted_labels = np.append(predicted_labels, predicted.numpy())
-                actual_labels = np.append(actual_labels, labels.numpy())
-                total += labels.size(0)
-                correct += (predicted == labels).sum().item()
-
-        accuracy = correct / total
-        print(f'Test Accuracy: {accuracy}')
-        return predicted_labels, actual_labels
+    def test(self, features, adj, labels, idx_test):
+        output = self.forward(features, adj)
+        loss_test = F.nll_loss(output[idx_test], labels[idx_test])
+        # acc_test = accuracy(output[idx_test], labels[idx_test])
+        # print("Test set results:",
+        #       "loss= {:.4f}".format(loss_test.item()),
+        #       "accuracy= {:.4f}".format(acc_test.item()))
+        return output[idx_test], labels[idx_test]
 
     def run(self):
         # accuracy_evaluator = Evaluate_Accuracy('training evaluator', '')
         print('method running...')
         print('--start training...')
-        resulting_loss, epochs = self.train(self.data['train_data'])
+        train_idx = self.data['train_test_val']['idx_train']
+        features = self.data['graph']['X']
+        labels = self.data['graph']['y']
+        adj = self.data['graph']['utility']['A']
+        val_idx = self.data['train_test_val']['idx_val']
+        test_idx = self.data['train_test_val']['idx_test']
+        resulting_loss, epochs = self.train(features, labels, adj, train_idx, val_idx)
         print('--start testing...')
-        predicted_labels, actual_labels = self.test(self.data['test_data'])
-        return resulting_loss, epochs, predicted_labels, actual_labels
+        output, labels = self.test(features, adj, labels, test_idx)
+        return resulting_loss, epochs, output, labels
