@@ -21,6 +21,11 @@ class Method_GNN(method, nn.Module):
     def __init__(self, mName, mDescription, hidden_size, num_layers, optimizer, activation_function):
         method.__init__(self, mName, mDescription, hidden_size, optimizer, activation_function)
         nn.Module.__init__(self)
+
+        self.seed = 42
+        torch.manual_seed(self.seed)
+        np.random.seed(self.seed)
+
         self.optimizer = optimizer
         self.activation_function = activation_function
         self.hidden_layers = num_layers

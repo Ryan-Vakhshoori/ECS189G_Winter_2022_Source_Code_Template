@@ -11,6 +11,9 @@ import numpy as np
 
 class ModelExecution(setting):
     def load_test_data(self):
+        seed = 42
+        np.random.seed(seed)
+
         loaded_data = self.dataset.load()
         self.method.data = loaded_data
         resulting_loss, epoch, predicted_labels, actual_labels = self.method.run()
