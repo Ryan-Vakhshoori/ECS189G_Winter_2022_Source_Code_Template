@@ -18,7 +18,6 @@ class Method_GNN_Citeseer(method, nn.Module):
     max_epoch = 50
     learning_rate = 5e-4
     hidden_units = 512
-    num_layers = 3
 
     def __init__(self, mName, mDescription, hidden_size, num_layers, optimizer, activation_function):
         method.__init__(self, mName, mDescription, hidden_size, optimizer, activation_function)
