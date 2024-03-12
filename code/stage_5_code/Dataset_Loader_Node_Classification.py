@@ -9,6 +9,7 @@ from code.base_class.dataset import dataset
 import torch
 import numpy as np
 import scipy.sparse as sp
+import random
 
 class Dataset_Loader(dataset):
     data = None
@@ -66,17 +67,44 @@ class Dataset_Loader(dataset):
 
         # the following part, you can either put them into the setting class or you can leave them in the dataset loader
         # the following train, test, val index are just examples, sample the train, test according to project requirements
+        unique_labels = np.unique(labels.numpy())
+        idx_train, idx_test = [], []
+
         if self.dataset_name == 'cora':
-            idx_train = range(140)
-            idx_test = range(200, 1200)
+            for label in unique_labels:
+                label_indices = np.where(labels.numpy() == label)[0]
+                random.shuffle(label_indices)
+                train_indices = label_indices[:20]
+                test_indices = label_indices[20:170]
+                idx_train.extend(train_indices)
+                idx_test.extend(test_indices)
+
+            idx_train.sort()
+            idx_test.sort()
             idx_val = range(1200, 1500)
         elif self.dataset_name == 'citeseer':
-            idx_train = range(120)
-            idx_test = range(200, 1200)
+            for label in unique_labels:
+                label_indices = np.where(labels.numpy() == label)[0]
+                random.shuffle(label_indices)
+                train_indices = label_indices[:20]
+                test_indices = label_indices[20:220]
+                idx_train.extend(train_indices)
+                idx_test.extend(test_indices)
+
+            idx_train.sort()
+            idx_test.sort()
             idx_val = range(1200, 1500)
         elif self.dataset_name == 'pubmed':
-            idx_train = range(60)
-            idx_test = range(6300, 7300)
+            for label in unique_labels:
+                label_indices = np.where(labels.numpy() == label)[0]
+                random.shuffle(label_indices)
+                train_indices = label_indices[:20]
+                test_indices = label_indices[20:220]
+                idx_train.extend(train_indices)
+                idx_test.extend(test_indices)
+
+            idx_train.sort()
+            idx_test.sort()
             idx_val = range(6000, 6300)
         #---- cora-small is a toy dataset I hand crafted for debugging purposes ---
         elif self.dataset_name == 'cora-small':
