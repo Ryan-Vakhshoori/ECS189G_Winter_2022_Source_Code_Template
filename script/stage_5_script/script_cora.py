@@ -41,3 +41,33 @@ if 1:
     print('GNN Cora Recall: ' + str(recall))
     print('************ Finish ************')
     graph_obj.traininglossgraph(epoch, train_loss)
+
+    method_obj = Method_GNN('GNN', '', 250, 2, "adam", "")
+    result_obj.result_destination_file_name = 'prediction_result_2'
+
+    print('************ Start (GNN Model 2) ************')
+    setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
+    setting_obj.print_setup_summary()
+    [accuracy, precision, f1_score, recall], train_loss, epoch = setting_obj.load_test_data()
+    print('************ Overall Performance ************')
+    print('GNN Cora Accuracy: ' + str(accuracy.item()))
+    print('GNN Cora Precision: ' + str(precision))
+    print('GNN Cora F1 Score: ' + str(f1_score))
+    print('GNN Cora Recall: ' + str(recall))
+    print('************ Finish ************')
+    graph_obj.traininglossgraph(epoch, train_loss)
+
+    method_obj = Method_GNN('GNN', '', 500, 2, "", "")
+    result_obj.result_destination_file_name = 'prediction_result_3'
+
+    print('************ Start (GNN Model 3) ************')
+    setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
+    setting_obj.print_setup_summary()
+    [accuracy, precision, f1_score, recall], train_loss, epoch = setting_obj.load_test_data()
+    print('************ Overall Performance ************')
+    print('GNN Cora Accuracy: ' + str(accuracy.item()))
+    print('GNN Cora Precision: ' + str(precision))
+    print('GNN Cora F1 Score: ' + str(f1_score))
+    print('GNN Cora Recall: ' + str(recall))
+    print('************ Finish ************')
+    graph_obj.traininglossgraph(epoch, train_loss)
