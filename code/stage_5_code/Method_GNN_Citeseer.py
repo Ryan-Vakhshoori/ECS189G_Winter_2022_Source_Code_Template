@@ -15,8 +15,8 @@ from code.stage_5_code.Layers import GraphConvolution
 
 class Method_GNN_Citeseer(method, nn.Module):
     data = None
-    max_epoch = 50
-    learning_rate = 5e-4
+    max_epoch = 200
+    learning_rate = 1e-2
     hidden_units = 512
 
     def __init__(self, mName, mDescription, hidden_size, num_layers, optimizer, activation_function):
@@ -34,9 +34,8 @@ class Method_GNN_Citeseer(method, nn.Module):
         # self.gc1 = GraphConvolution(1433, 300)
         # self.gc2 = GraphConvolution(300, 7)
 
-        self.gc1 = GraphConvolution(3703, 2000)
-        self.gc2 = GraphConvolution(2000, 4000)
-        self.gc3 = GraphConvolution(4000, 6)
+        self.gc1 = GraphConvolution(3703, 16)
+        self.gc2 = GraphConvolution(16, 6)
 
         # self.gc1 = GraphConvolution(3703, 300)
         # self.gc2 = GraphConvolution(300, 6)
@@ -46,14 +45,12 @@ class Method_GNN_Citeseer(method, nn.Module):
     def forward(self, x, adj):
         x = F.relu(self.gc1(x, adj))
         x = F.dropout(x, self.dropout, training=self.training)
-        x = F.relu(self.gc2(x, adj))
-        x = F.dropout(x, self.dropout, training=self.training)
-        x = self.gc3(x, adj)
+        x = self.gc2(x, adj)
         return F.log_softmax(x, dim=1)
 
     def train(self, features, labels, adj, idx_train, idx_val):
         if self.optimizer == "adam":
-            optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
+            optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate, weight_decay=5e-4)
         else:
             optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate, momentum=0.9)
         print(self.optimizer)

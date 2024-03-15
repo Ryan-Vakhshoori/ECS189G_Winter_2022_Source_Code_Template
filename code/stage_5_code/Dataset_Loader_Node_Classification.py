@@ -15,8 +15,13 @@ class Dataset_Loader(dataset):
     data = None
     dataset_name = None
 
-    def __init__(self, seed=None, dName=None, dDescription=None):
+    def __init__(self, seed=34, dName=None, dDescription=None):
         super(Dataset_Loader, self).__init__(dName, dDescription)
+        self.seed = seed
+        # np.random.seed(self.seed)
+        random.seed(self.seed)
+        np.random.seed(self.seed)
+        torch.manual_seed(self.seed)
 
     def adj_normalize(self, mx):
         """normalize sparse matrix"""
@@ -37,14 +42,13 @@ class Dataset_Loader(dataset):
 
     def encode_onehot(self, labels):
         classes = set(labels)
-        classes_dict = {c: np.identity(len(classes))[i, :] for i, c in enumerate(classes)}
+        classes_dict = {c: np.identity(len(classes))[i, :] for i, c in enumerate(sorted(classes))}
         onehot_labels = np.array(list(map(classes_dict.get, labels)), dtype=np.int32)
         return onehot_labels
 
     def load(self):
         """Load citation network dataset"""
         print('Loading {} dataset...'.format(self.dataset_name))
-
         # load node data from file
         idx_features_labels = np.genfromtxt("{}/node".format(self.dataset_source_folder_path), dtype=np.dtype(str))
         features = sp.csr_matrix(idx_features_labels[:, 1:-1], dtype=np.float32)
@@ -69,6 +73,8 @@ class Dataset_Loader(dataset):
         # the following train, test, val index are just examples, sample the train, test according to project requirements
         unique_labels = np.unique(labels.numpy())
         idx_train, idx_test = [], []
+        random.seed(self.seed)
+        # print(random.seed())
 
         if self.dataset_name == 'cora':
             for label in unique_labels:
