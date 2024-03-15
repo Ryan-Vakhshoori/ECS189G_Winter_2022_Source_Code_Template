@@ -15,17 +15,17 @@ from code.stage_5_code.Layers import GraphConvolution
 
 class Method_GNN_Citeseer(method, nn.Module):
     data = None
-    max_epoch = 200
-    learning_rate = 1e-2
+    max_epoch = 30
+    learning_rate = 1e-3
     hidden_units = 512
 
     def __init__(self, mName, mDescription, hidden_size, num_layers, optimizer, activation_function):
         method.__init__(self, mName, mDescription, hidden_size, optimizer, activation_function)
         nn.Module.__init__(self)
 
-        self.seed = 42
-        torch.manual_seed(self.seed)
-        np.random.seed(self.seed)
+        # self.seed = 42
+        # torch.manual_seed(self.seed)
+        # np.random.seed(self.seed)
 
         self.optimizer = optimizer
         self.activation_function = activation_function
@@ -34,13 +34,13 @@ class Method_GNN_Citeseer(method, nn.Module):
         # self.gc1 = GraphConvolution(1433, 300)
         # self.gc2 = GraphConvolution(300, 7)
 
-        self.gc1 = GraphConvolution(3703, 16)
-        self.gc2 = GraphConvolution(16, 6)
+        self.gc1 = GraphConvolution(3703, 1400)
+        self.gc2 = GraphConvolution(1400, 6)
 
         # self.gc1 = GraphConvolution(3703, 300)
         # self.gc2 = GraphConvolution(300, 6)
 
-        self.dropout = 0.5
+        self.dropout = 0.7
 
     def forward(self, x, adj):
         x = F.relu(self.gc1(x, adj))
