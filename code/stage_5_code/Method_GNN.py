@@ -30,6 +30,7 @@ class Method_GNN(method, nn.Module):
         self.activation_function = activation_function
         self.hidden_layers = num_layers
         self.hidden_size = hidden_size
+
         self.gc1 = GraphConvolution(1433, self.hidden_size)
         self.gc2 = GraphConvolution(self.hidden_size, 7)
         self.dropout = 0.3
