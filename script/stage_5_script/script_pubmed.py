@@ -13,7 +13,7 @@ if 1:
     #------------------------------------------------------
 
     #---- objection initialization section ---------------
-    loaded_obj = Dataset_Loader('', 'pubmed')
+    loaded_obj = Dataset_Loader(95, 'pubmed')
     loaded_obj.dataset_source_folder_path = '../../data/stage_5_data/pubmed'
     loaded_obj.dataset_name = 'pubmed'
     #output = loaded_obj.load()
@@ -29,15 +29,15 @@ if 1:
     evaluate_obj = Evaluation_Metrics('accuracy', '')
 
     result_obj.result_destination_file_name = 'prediction_result_1'
-
+    # seed: 2147483648
     print('************ Start (RNN Model 1) ************')
     setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
     setting_obj.print_setup_summary()
-    accuracy, train_loss, epoch = setting_obj.load_test_data()
+    [accuracy, precision, f1_score, recall], train_loss, epoch = setting_obj.load_test_data()
     print('************ Overall Performance ************')
     print('GNN Pubmed Accuracy: ' + str(accuracy.item()))
-    # print('RNN Text Classification Precision: ' + str(precision))
-    # print('RNN Text Classification F1 Score: ' + str(f1_score))
-    # print('RNN Text Classification Recall: ' + str(recall))
+    print('GNN Pubmed Precision: ' + str(precision))
+    print('GNN Pubmed F1 Score: ' + str(f1_score))
+    print('GNN Pubmed Recall: ' + str(recall))
     print('************ Finish ************')
     graph_obj.traininglossgraph(epoch, train_loss)

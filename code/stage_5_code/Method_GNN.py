@@ -15,23 +15,23 @@ from code.stage_5_code.Layers import GraphConvolution
 
 class Method_GNN(method, nn.Module):
     data = None
-    max_epoch = 35
+    max_epoch = 80
     learning_rate = 1e-3
 
     def __init__(self, mName, mDescription, hidden_size, num_layers, optimizer, activation_function):
         method.__init__(self, mName, mDescription, hidden_size, optimizer, activation_function)
         nn.Module.__init__(self)
 
-        self.seed = 42
-        torch.manual_seed(self.seed)
-        np.random.seed(self.seed)
+        # self.seed = 34
+        # torch.manual_seed(self.seed)
+        # np.random.seed(self.seed)
 
         self.optimizer = optimizer
         self.activation_function = activation_function
         self.hidden_layers = num_layers
         self.hidden_size = hidden_size
-        self.gc1 = GraphConvolution(1433, 300)
-        self.gc2 = GraphConvolution(300, 7)
+        self.gc1 = GraphConvolution(1433, 500)
+        self.gc2 = GraphConvolution(500, 7)
         self.dropout = 0.5
 
     def forward(self, x, adj):
@@ -42,7 +42,7 @@ class Method_GNN(method, nn.Module):
 
     def train(self, features, labels, adj, idx_train, idx_val):
         if self.optimizer == "adam":
-            optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
+            optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate, weight_decay=5e-4)
         else:
             optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate, momentum=0.9)
         print(self.optimizer)

@@ -13,7 +13,7 @@ if 1:
     #------------------------------------------------------
 
     #---- objection initialization section ---------------
-    loaded_obj = Dataset_Loader('', 'citeseer')
+    loaded_obj = Dataset_Loader(44, 'citeseer')
     loaded_obj.dataset_source_folder_path = '../../data/stage_5_data/citeseer'
     loaded_obj.dataset_name = 'citeseer'
     #output = loaded_obj.load()
@@ -33,11 +33,11 @@ if 1:
     print('************ Start (RNN Model 1) ************')
     setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
     setting_obj.print_setup_summary()
-    accuracy, train_loss, epoch = setting_obj.load_test_data()
+    [accuracy, precision, f1_score, recall], train_loss, epoch = setting_obj.load_test_data()
     print('************ Overall Performance ************')
     print('GNN Citeseer Accuracy: ' + str(accuracy.item()))
-    # print('RNN Text Classification Precision: ' + str(precision))
-    # print('RNN Text Classification F1 Score: ' + str(f1_score))
-    # print('RNN Text Classification Recall: ' + str(recall))
+    print('GNN Citeseer Precision: ' + str(precision))
+    print('GNN Citeseer F1 Score: ' + str(f1_score))
+    print('GNN Citeseer Recall: ' + str(recall))
     print('************ Finish ************')
     graph_obj.traininglossgraph(epoch, train_loss)

@@ -15,17 +15,17 @@ from code.stage_5_code.Layers import GraphConvolution
 
 class Method_GNN_Pubmed(method, nn.Module):
     data = None
-    max_epoch = 25
-    learning_rate = 1e-3
+    max_epoch = 200
+    learning_rate = 1e-2
     hidden_units = 64
 
     def __init__(self, mName, mDescription, hidden_size, num_layers, optimizer, activation_function):
         method.__init__(self, mName, mDescription, hidden_size, optimizer, activation_function)
         nn.Module.__init__(self)
 
-        self.seed = 42
-        torch.manual_seed(self.seed)
-        np.random.seed(self.seed)
+        # self.seed = 42
+        # torch.manual_seed(self.seed)
+        # np.random.seed(self.seed)
 
         self.optimizer = optimizer
         self.activation_function = activation_function
@@ -34,26 +34,20 @@ class Method_GNN_Pubmed(method, nn.Module):
         # self.gc1 = GraphConvolution(1433, 300)
         # self.gc2 = GraphConvolution(300, 7)
 
-        self.gc1 = GraphConvolution(500, 700)
-        self.gc2 = GraphConvolution(700, 300)
-        self.gc3 = GraphConvolution(300, 3)
+        self.gc1 = GraphConvolution(500, 16)
+        self.gc2 = GraphConvolution(16, 3)
 
-        # self.gc1 = GraphConvolution(3703, 300)
-        # self.gc2 = GraphConvolution(300, 6)
-
-        self.dropout = 0.2
+        self.dropout = 0.5
 
     def forward(self, x, adj):
         x = F.relu(self.gc1(x, adj))
-        x = F.dropout(x, self.dropout, training=self.training)
-        x = F.relu(self.gc2(x, adj))
-        x = F.dropout(x, self.dropout, training=self.training)
-        x = self.gc3(x, adj)
+        # x = F.dropout(x, self.dropout, training=self.training)
+        x = self.gc2(x, adj)
         return F.log_softmax(x, dim=1)
 
     def train(self, features, labels, adj, idx_train, idx_val):
         if self.optimizer == "adam":
-            optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
+            optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate, weight_decay=5e-4)
         else:
             optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate, momentum=0.9)
         print(self.optimizer)
