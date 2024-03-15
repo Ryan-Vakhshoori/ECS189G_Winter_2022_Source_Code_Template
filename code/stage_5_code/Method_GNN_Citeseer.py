@@ -15,7 +15,7 @@ from code.stage_5_code.Layers import GraphConvolution
 
 class Method_GNN_Citeseer(method, nn.Module):
     data = None
-    max_epoch = 30
+    max_epoch = 150
     learning_rate = 1e-3
     hidden_units = 512
 
@@ -34,8 +34,8 @@ class Method_GNN_Citeseer(method, nn.Module):
         # self.gc1 = GraphConvolution(1433, 300)
         # self.gc2 = GraphConvolution(300, 7)
 
-        self.gc1 = GraphConvolution(3703, 1400)
-        self.gc2 = GraphConvolution(1400, 6)
+        self.gc1 = GraphConvolution(3703, 2500)
+        self.gc2 = GraphConvolution(2500, 6)
 
         # self.gc1 = GraphConvolution(3703, 300)
         # self.gc2 = GraphConvolution(300, 6)
