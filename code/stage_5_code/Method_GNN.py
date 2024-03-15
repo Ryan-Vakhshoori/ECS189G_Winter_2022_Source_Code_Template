@@ -13,18 +13,21 @@ import numpy as np
 import torch.nn.functional as F
 from code.stage_5_code.Layers import GraphConvolution
 
+torch.manual_seed(42)
+np.random.seed(42)
+
 class Method_GNN(method, nn.Module):
     data = None
-    max_epoch = 35
+    max_epoch = 50
     learning_rate = 1e-3
 
     def __init__(self, mName, mDescription, hidden_size, num_layers, optimizer, activation_function):
         method.__init__(self, mName, mDescription, hidden_size, optimizer, activation_function)
         nn.Module.__init__(self)
 
-        self.seed = 42
-        torch.manual_seed(self.seed)
-        np.random.seed(self.seed)
+        # self.seed = 42
+        # torch.manual_seed(self.seed)
+        # np.random.seed(self.seed)
 
         self.optimizer = optimizer
         self.activation_function = activation_function

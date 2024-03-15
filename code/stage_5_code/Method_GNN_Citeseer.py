@@ -15,9 +15,9 @@ from code.stage_5_code.Layers import GraphConvolution
 
 class Method_GNN_Citeseer(method, nn.Module):
     data = None
-    max_epoch = 50
-    learning_rate = 5e-4
-    hidden_units = 512
+    max_epoch = 25
+    learning_rate = 0.001
+    # hidden_units = 512
 
     def __init__(self, mName, mDescription, hidden_size, num_layers, optimizer, activation_function):
         method.__init__(self, mName, mDescription, hidden_size, optimizer, activation_function)
@@ -29,8 +29,8 @@ class Method_GNN_Citeseer(method, nn.Module):
 
         self.optimizer = optimizer
         self.activation_function = activation_function
-        self.hidden_layers = num_layers
-        self.hidden_size = hidden_size
+        # self.hidden_layers = num_layers
+        # self.hidden_size = hidden_size
         # self.gc1 = GraphConvolution(1433, 300)
         # self.gc2 = GraphConvolution(300, 7)
 
@@ -38,8 +38,9 @@ class Method_GNN_Citeseer(method, nn.Module):
         self.gc2 = GraphConvolution(2000, 4000)
         self.gc3 = GraphConvolution(4000, 6)
 
-        # self.gc1 = GraphConvolution(3703, 300)
-        # self.gc2 = GraphConvolution(300, 6)
+        # self.gc1 = GraphConvolution(3703, 256)
+        # self.gc2 = GraphConvolution(256, 128)
+        # self.gc3 = GraphConvolution(128, 6)
 
         self.dropout = 0.5
 
