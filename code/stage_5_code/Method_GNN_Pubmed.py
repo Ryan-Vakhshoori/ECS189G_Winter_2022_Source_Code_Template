@@ -17,6 +17,7 @@ class Method_GNN_Pubmed(method, nn.Module):
     data = None
     max_epoch = 25
     learning_rate = 1e-3
+    hidden_units = 64
 
     def __init__(self, mName, mDescription, hidden_size, num_layers, optimizer, activation_function):
         method.__init__(self, mName, mDescription, hidden_size, optimizer, activation_function)

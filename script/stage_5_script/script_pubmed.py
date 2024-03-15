@@ -21,7 +21,7 @@ if 1:
     # print(output['graph']['X'].shape[1])
     # graph_obj = Graph()
     graph_obj = Graph()
-    method_obj = Method_GNN_Pubmed('GNN', '', 100, 3, "adam", "")
+    method_obj = Method_GNN_Pubmed('GNN', '', 100, 2, "adam", "")
 
     result_obj = Result_Saver('saver', '')
     result_obj.result_destination_folder_path = '../../result/stage_5_result/GNN_'
