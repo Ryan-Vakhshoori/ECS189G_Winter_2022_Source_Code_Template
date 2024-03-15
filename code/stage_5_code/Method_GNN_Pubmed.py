@@ -16,7 +16,7 @@ from code.stage_5_code.Layers import GraphConvolution
 class Method_GNN_Pubmed(method, nn.Module):
     data = None
     max_epoch = 200
-    learning_rate = 1e-3
+    learning_rate = 1e-2
     hidden_units = 64
 
     def __init__(self, mName, mDescription, hidden_size, num_layers, optimizer, activation_function):
@@ -34,14 +34,14 @@ class Method_GNN_Pubmed(method, nn.Module):
         # self.gc1 = GraphConvolution(1433, 300)
         # self.gc2 = GraphConvolution(300, 7)
 
-        self.gc1 = GraphConvolution(500, 150)
-        self.gc2 = GraphConvolution(150, 3)
+        self.gc1 = GraphConvolution(500, 16)
+        self.gc2 = GraphConvolution(16, 3)
 
         self.dropout = 0.5
 
     def forward(self, x, adj):
         x = F.relu(self.gc1(x, adj))
-        x = F.dropout(x, self.dropout, training=self.training)
+        # x = F.dropout(x, self.dropout, training=self.training)
         x = self.gc2(x, adj)
         return F.log_softmax(x, dim=1)
 

@@ -13,7 +13,7 @@ if 1:
     #------------------------------------------------------
 
     #---- objection initialization section ---------------
-    loaded_obj = Dataset_Loader(48, 'pubmed')
+    loaded_obj = Dataset_Loader(95, 'pubmed')
     loaded_obj.dataset_source_folder_path = '../../data/stage_5_data/pubmed'
     loaded_obj.dataset_name = 'pubmed'
     #output = loaded_obj.load()
