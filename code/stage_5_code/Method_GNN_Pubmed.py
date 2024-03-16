@@ -34,7 +34,7 @@ class Method_GNN_Pubmed(method, nn.Module):
         self.gc1 = GraphConvolution(500, self.hidden_size)
         self.gc2 = GraphConvolution(self.hidden_size, 3)
 
-        self.dropout = 0.5
+        # self.dropout = 0.5
 
     def forward(self, x, adj):
         x = F.relu(self.gc1(x, adj))
