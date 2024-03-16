@@ -15,7 +15,7 @@ from code.stage_5_code.Layers import GraphConvolution
 
 class Method_GNN_Pubmed(method, nn.Module):
     data = None
-    max_epoch = 200
+    max_epoch = 100
     learning_rate = 1e-2
 
     def __init__(self, mName, mDescription, hidden_size, num_layers, optimizer, activation_function):
