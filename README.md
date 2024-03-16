@@ -29,3 +29,13 @@ then go to stage_4_script and run: script.py
 ### For Text Generation
 install pandas library
 run script: script_TG.py
+
+## To run for Part5:
+
+navigate to script/stage_2_script
+
+#### Run: script_cora.py for CORA dataset
+
+#### Run: script_pubmed.py for PUBMED dataset
+
+#### Run: script_citeseer.py for CITESEER dataset
