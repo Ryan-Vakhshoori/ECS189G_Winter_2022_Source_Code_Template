@@ -13,48 +13,61 @@ if 1:
     #------------------------------------------------------
 
     #---- objection initialization section ---------------
-    # loaded_obj = Dataset_Loader(35, 'citeseer')
-    # loaded_obj.dataset_source_folder_path = '../../data/stage_5_data/citeseer'
-    # loaded_obj.dataset_name = 'citeseer'
-    # #output = loaded_obj.load()
-    # # print(output)
-    # # print(output['graph']['X'].shape[1])
-    # # graph_obj = Graph()
+    loaded_obj = Dataset_Loader(35, 'citeseer')
+    loaded_obj.dataset_source_folder_path = '../../data/stage_5_data/citeseer'
+    loaded_obj.dataset_name = 'citeseer'
+    #output = loaded_obj.load()
+    # print(output)
+    # print(output['graph']['X'].shape[1])
     # graph_obj = Graph()
-    # method_obj = Method_GNN_Citeseer('GNN', '', 100, 2, "adam", "")
-    #
-    # result_obj = Result_Saver('saver', '')
-    # result_obj.result_destination_folder_path = '../../result/stage_5_result/GNN_'
-    # setting_obj = ModelExecution('model execution', '')
-    # evaluate_obj = Evaluation_Metrics('accuracy', '')
-    #
-    # result_obj.result_destination_file_name = 'prediction_result_1'
+    graph_obj = Graph()
+    method_obj = Method_GNN_Citeseer('GNN', '', 2500, 2, "adam", "")
 
-    # print('************ Start (GNN Model 1) ************')
-    # setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
-    # setting_obj.print_setup_summary()
-    # [accuracy, precision, f1_score, recall], train_loss, epoch = setting_obj.load_test_data()
-    # print('************ Overall Performance ************')
-    # print('GNN Citeseer Accuracy: ' + str(accuracy.item()))
-    # print('GNN Citeseer Precision: ' + str(precision))
-    # print('GNN Citeseer F1 Score: ' + str(f1_score))
-    # print('GNN Citeseer Recall: ' + str(recall))
-    # print('************ Finish ************')
-    # graph_obj.traininglossgraph(epoch, train_loss)
+    result_obj = Result_Saver('saver', '')
+    result_obj.result_destination_folder_path = '../../result/stage_5_result/GNN_'
+    setting_obj = ModelExecution('model execution', '')
+    evaluate_obj = Evaluation_Metrics('accuracy', '')
 
+    result_obj.result_destination_file_name = 'prediction_result_1'
 
-    for i in range(1):
-        loaded_obj = Dataset_Loader(2,'citeseer')
-        loaded_obj.dataset_source_folder_path = '../../data/stage_5_data/citeseer'
-        loaded_obj.dataset_name = 'citeseer'
-        graph_obj = Graph()
-        method_obj = Method_GNN_Citeseer('GNN', '', 100, 2, "adam", "")
-        result_obj = Result_Saver('saver', '')
-        result_obj.result_destination_folder_path = '../../result/stage_5_result/GNN_'
-        setting_obj = ModelExecution('model execution', '')
-        evaluate_obj = Evaluation_Metrics('accuracy', '')
-        result_obj.result_destination_file_name = 'prediction_result_1'
-        setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
-        setting_obj.print_setup_summary()
-        [accuracy, precision, f1_score, recall], train_loss, epoch = setting_obj.load_test_data()
-        print(f'For seed: {i} GNN Citeseer Accuracy: {str(accuracy.item())}')
+    print('************ Start (GNN Model 1) ************')
+    setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
+    setting_obj.print_setup_summary()
+    [accuracy, precision, f1_score, recall], train_loss, epoch = setting_obj.load_test_data()
+    print('************ Overall Performance ************')
+    print('GNN Citeseer Accuracy: ' + str(accuracy.item()))
+    print('GNN Citeseer Precision: ' + str(precision))
+    print('GNN Citeseer F1 Score: ' + str(f1_score))
+    print('GNN Citeseer Recall: ' + str(recall))
+    print('************ Finish ************')
+    graph_obj.traininglossgraph(epoch, train_loss)
+
+    method_obj = Method_GNN_Citeseer('GNN', '', 1250, 2, "adam", "")
+    result_obj.result_destination_file_name = 'prediction_result_2'
+
+    print('************ Start (GNN Model 2) ************')
+    setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
+    setting_obj.print_setup_summary()
+    [accuracy, precision, f1_score, recall], train_loss, epoch = setting_obj.load_test_data()
+    print('************ Overall Performance ************')
+    print('GNN Citeseer Accuracy: ' + str(accuracy.item()))
+    print('GNN Citeseer Precision: ' + str(precision))
+    print('GNN Citeseer F1 Score: ' + str(f1_score))
+    print('GNN Citeseer Recall: ' + str(recall))
+    print('************ Finish ************')
+    graph_obj.traininglossgraph(epoch, train_loss)
+
+    method_obj = Method_GNN_Citeseer('GNN', '', 2500, 2, "", "")
+    result_obj.result_destination_file_name = 'prediction_result_2'
+
+    print('************ Start (GNN Model 3) ************')
+    setting_obj.prepare(loaded_obj, method_obj, result_obj, evaluate_obj)
+    setting_obj.print_setup_summary()
+    [accuracy, precision, f1_score, recall], train_loss, epoch = setting_obj.load_test_data()
+    print('************ Overall Performance ************')
+    print('GNN Citeseer Accuracy: ' + str(accuracy.item()))
+    print('GNN Citeseer Precision: ' + str(precision))
+    print('GNN Citeseer F1 Score: ' + str(f1_score))
+    print('GNN Citeseer Recall: ' + str(recall))
+    print('************ Finish ************')
+    graph_obj.traininglossgraph(epoch, train_loss)

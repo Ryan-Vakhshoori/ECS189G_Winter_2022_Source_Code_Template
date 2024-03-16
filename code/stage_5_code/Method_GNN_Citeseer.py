@@ -15,9 +15,8 @@ from code.stage_5_code.Layers import GraphConvolution
 
 class Method_GNN_Citeseer(method, nn.Module):
     data = None
-    max_epoch = 40
-    learning_rate = 1e-2
-    hidden_units = 512
+    max_epoch = 150
+    learning_rate = 1e-3
 
     def __init__(self, mName, mDescription, hidden_size, num_layers, optimizer, activation_function):
         method.__init__(self, mName, mDescription, hidden_size, optimizer, activation_function)
@@ -31,16 +30,11 @@ class Method_GNN_Citeseer(method, nn.Module):
         self.activation_function = activation_function
         self.hidden_layers = num_layers
         self.hidden_size = hidden_size
-        # self.gc1 = GraphConvolution(1433, 300)
-        # self.gc2 = GraphConvolution(300, 7)
 
-        self.gc1 = GraphConvolution(3703, 195)
-        self.gc2 = GraphConvolution(195, 6)
+        self.gc1 = GraphConvolution(3703, self.hidden_size)
+        self.gc2 = GraphConvolution(self.hidden_size, 6)
 
-        # self.gc1 = GraphConvolution(3703, 300)
-        # self.gc2 = GraphConvolution(300, 6)
-
-        self.dropout = 0.2
+        self.dropout = 0.7
 
     def forward(self, x, adj):
         x = F.relu(self.gc1(x, adj))
@@ -65,9 +59,9 @@ class Method_GNN_Citeseer(method, nn.Module):
             loss_val = F.nll_loss(output[idx_val], labels[idx_val])
             epochs.append(epoch)
             resulting_loss.append(loss_train.item())
-            # print('Epoch: {:04d}'.format(epoch + 1),
-            #       'loss_train: {:.4f}'.format(loss_train.item()),
-            #       'loss_val: {:.4f}'.format(loss_val.item()))
+            print('Epoch: {:04d}'.format(epoch + 1),
+                  'loss_train: {:.4f}'.format(loss_train.item()),
+                  'loss_val: {:.4f}'.format(loss_val.item()))
         return resulting_loss, epochs
 
     def test(self, features, adj, labels, idx_test):

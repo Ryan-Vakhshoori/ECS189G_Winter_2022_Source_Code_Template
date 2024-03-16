@@ -89,20 +89,20 @@ class Dataset_Loader(dataset):
             idx_test.sort()
             idx_val = range(1200, 1500)
         elif self.dataset_name == 'citeseer':
-            # for label in unique_labels:
-            #     label_indices = np.where(labels.numpy() == label)[0]
-            #     random.shuffle(label_indices)
-            #     train_indices = label_indices[:20]
-            #     test_indices = label_indices[20:220]
-            #     idx_train.extend(train_indices)
-            #     idx_test.extend(test_indices)
-            #
-            # idx_train.sort()
-            # idx_test.sort()
-            # idx_val = range(1200, 1500)
-            idx_train = range(120)
-            idx_test = range(200, 1200)
+            for label in unique_labels:
+                label_indices = np.where(labels.numpy() == label)[0]
+                random.shuffle(label_indices)
+                train_indices = label_indices[:20]
+                test_indices = label_indices[20:220]
+                idx_train.extend(train_indices)
+                idx_test.extend(test_indices)
+
+            idx_train.sort()
+            idx_test.sort()
             idx_val = range(1200, 1500)
+            # idx_train = range(120)
+            # idx_test = range(200, 1200)
+            # idx_val = range(1200, 1500)
         elif self.dataset_name == 'pubmed':
             for label in unique_labels:
                 label_indices = np.where(labels.numpy() == label)[0]
